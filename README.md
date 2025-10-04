@@ -1,16 +1,16 @@
-## Hi there 👋
+# 🌍 Say Hi From Your Country
 
-<!--
-**buralog/buralog** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+![World map](assets/world.svg)
 
-Here are some ideas to get you started:
+**Click your country here → [Open the interactive map](https://buralog.github.io/buralog/)**
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## Stats
+- **Total countries:** 1
+- **Total hellos:** 1
+
+## Visitors by Country
+| Country | Hellos | First |
+|---|---:|---|
+| TR | 1 | @buralog |
+
+_Last updated: 2025-10-04T21:48:22.760Z_
