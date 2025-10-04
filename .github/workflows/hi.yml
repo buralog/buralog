@@ -1,4 +1,4 @@
-name: Hi Map
+name: Hello World Map
 
 on:
   issues:
@@ -10,7 +10,7 @@ permissions:
   issues: write
 
 concurrency:
-  group: world-hi-updates
+  group: hello-world-updates
   cancel-in-progress: false
 
 jobs:
@@ -113,20 +113,27 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add -A
-            git commit -m "world-hi: update by ${{ github.event.issue.user.login }}"
+            git commit -m "hello-world: update by ${{ github.event.issue.user.login }}"
             git push
           else
             echo "No changes to commit"
           fi
 
-      - name: Thank and close
+      - name: Thank, label, and close
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "$GH_TOKEN" | gh auth login --with-token
           CHANGED=$(test -s /tmp/changed.flag && echo "yes" || echo "no")
           if [ "$CHANGED" = "yes" ]; then
-            gh issue comment ${{ github.event.issue.number }} --body "Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title }}**. The map & stats are updated. ✨"
+            gh issue comment ${{ github.event.issue.number }} \
+              --body "Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title }}**. The map & stats are updated. ✨"
           else
-            gh issue comment ${{ github.event.issue.number }} --body "Hey @${{ github.event.issue.user.login }} — your selection didn’t change anything (same country as before or limit reached)."
+            gh issue comment ${{ github.event.issue.number }} \
+              --body "Hey @${{ github.event.issue.user.login }} — your selection didn’t change anything (same country as before or limit reached)."
           fi
-          gh issue close ${{ github.event.issue.number }}
+          # Add a label for history
+          gh issue edit ${{ github.event.issue.number }} --add-label "hello-world"
+          # Close issue with a final note
+          gh issue close ${{ github.event.issue.number }} --comment "Closed automatically ✅"
