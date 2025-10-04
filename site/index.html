@@ -3,6 +3,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Say Hi from Your Country 🌍</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin />
 <style>
     :root {
         --pad: 20px;
@@ -17,60 +20,31 @@
         margin-bottom: 12px;
     }
 
-    .map-wrap {
-        position: relative;
-        display: inline-block;
-        max-width: 100%;
+    #map {
+        height: 72vh;
+        min-height: 420px;
         border: 1px solid #eee;
         border-radius: 12px;
-        overflow: hidden;
     }
 
-    .map {
-        display: block;
-        width: min(100%, 1200px);
-        height: auto;
-        aspect-ratio: 3 / 2;
-        /* keeps space reserved while loading */
-        background: #fafafa;
+    .leaflet-container {
+        background: #f8fafb;
     }
 
-    /* Hover outline for countries still comes from your SVG’s <a><path>… */
-    a path {
-        cursor: pointer;
-    }
-
-    a:hover path,
-    a:focus path {
-        outline: none;
-        stroke: #000;
-        stroke-width: .5;
-    }
-
-    /* Pan/zoom controls */
-    .pz-controls {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        display: flex;
-        gap: 6px;
-        z-index: 5;
-    }
-
-    .pz-btn {
-        appearance: none;
-        border: 1px solid #ddd;
-        background: #fff;
-        border-radius: 8px;
+    /* Popup button */
+    .popup-btn {
+        display: inline-block;
+        margin-top: 8px;
         padding: 6px 10px;
-        font-size: 14px;
-        line-height: 1;
-        cursor: pointer;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+        border: 1px solid #d0d7de;
+        border-radius: 8px;
+        background: #fff;
+        text-decoration: none;
+        font-weight: 600;
     }
 
-    .pz-btn:hover {
-        background: #f5f5f5;
+    .popup-btn:hover {
+        background: #f6f8fa;
     }
 
     .note {
@@ -81,84 +55,134 @@
 
 <header>
     <h1>Say Hi from Your Country 🌍</h1>
-    <p>Click your country to open a pre-filled GitHub Issue. Submit it to light up the map on my profile.</p>
+    <p>Click a country to open a pre-filled GitHub Issue. Submit it to light up the map on my profile.</p>
 </header>
 
-<div class="map-wrap">
-    <!-- Controls overlay -->
-    <div class="pz-controls" aria-label="Map controls">
-        <button class="pz-btn" id="btn-reset" type="button" title="Reset view">Reset</button>
-        <button class="pz-btn" id="btn-zoom-out" type="button" title="Zoom out">−</button>
-        <button class="pz-btn" id="btn-zoom-in" type="button" title="Zoom in">+</button>
-    </div>
-
-    <!-- We embed the clickable SVG as a document so its <a> links work.
-       Important: inside the SVG, keep target="_top" on <a> so it can break out of the object. -->
-    <object id="world" class="map" data="./assets/world.clickable.svg" type="image/svg+xml"
-        aria-label="Interactive world map"></object>
-</div>
-
+<div id="map" role="region" aria-label="Interactive world map"></div>
 <p class="note">Powered by GitHub Actions · We only record your public GitHub handle and chosen country.</p>
 
-<!-- Panzoom (actively maintained) -->
-<script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
 <script>
-    (function () {
-        const obj = document.getElementById('world');
-        let panzoomInstance = null;
-
-        obj.addEventListener('load', () => {
-            // Access the inline SVG inside the <object>
-            const doc = obj.contentDocument;
-            if (!doc) return;
-            const svg = doc.querySelector('svg');
-            if (!svg) return;
-
-            // Ensure the SVG has a viewBox (needed for proper zoom). Add one in the file if missing.
-            // Initialize Panzoom on the SVG root
-            panzoomInstance = Panzoom(svg, {
-                maxScale: 10,
-                minScale: 0.5,
-                step: 0.25,
-                contain: 'outside',     // keep panning reasonable
-                cursor: 'grab',         // nice UX
-                panOnlyWhenZoomed: false
-            });
-
-            // Wheel to zoom
-            svg.addEventListener('wheel', panzoomInstance.zoomWithWheel, { passive: false });
-
-            // Double click to zoom in a bit
-            svg.addEventListener('dblclick', (e) => {
-                e.preventDefault();
-                panzoomInstance.zoomIn({ animate: true, step: 0.5, focal: e });
-            });
-
-            // Make panning feel good (grab cursor on drag)
-            svg.addEventListener('mousedown', () => svg.style.cursor = 'grabbing');
-            doc.addEventListener('mouseup', () => svg.style.cursor = 'grab');
-
-            // Hook up buttons
-            document.getElementById('btn-reset').addEventListener('click', () => {
-                panzoomInstance.reset({ animate: true });
-            });
-            document.getElementById('btn-zoom-in').addEventListener('click', () => {
-                panzoomInstance.zoomIn({ animate: true });
-            });
-            document.getElementById('btn-zoom-out').addEventListener('click', () => {
-                panzoomInstance.zoomOut({ animate: true });
-            });
-
-            // Optional: fit & center initial view a bit nicer
-            // Panzoom works with transforms; to "fit", you can gently zoom out once:
-            // panzoomInstance.reset({ animate: false });
+    (async function () {
+        // 1) Create the map
+        const map = L.map('map', {
+            worldCopyJump: true,
+            zoomSnap: 0.25,
+            zoomDelta: 0.5
         });
 
-        // Fallback: if the object fails to load, show a gentle message (optional)
-        obj.addEventListener('error', () => {
-            console.warn('SVG failed to load. Check the path to assets/world.clickable.svg.');
+        // Optional basemap (OSM). Remove if you want a clean blank background.
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        map.fitWorld({ animate: false, padding: [30, 30] });
+
+        // 2) Load your live counts from the repo (fallback to empty)
+        let counts = {};
+        try {
+            const res = await fetch('https://raw.githubusercontent.com/buralog/buralog/main/data/visitors.json', { cache: 'no-store' });
+            if (res.ok) {
+                const json = await res.json();
+                counts = (json && json.countries) ? json.countries : {};
+            }
+        } catch (_) { /* no-op */ }
+
+        // 3) Load world countries (has ISO-2 in properties.cca2)
+        const worldUrl = 'https://cdn.jsdelivr.net/npm/world-countries@4/countries.geo.json';
+        const world = await fetch(worldUrl, { cache: 'force-cache' }).then(r => r.json());
+
+        // 4) Style helpers
+        function getFillByCount(c) {
+            if (c >= 50) return '#2e7d32';
+            if (c >= 10) return '#66bb6a';
+            if (c >= 1) return '#a5d6a7';
+            return '#ffffff';
+        }
+        function flagEmoji(iso2) {
+            return iso2.toUpperCase().replace(/./g, c =>
+                String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)
+            );
+        }
+
+        // 5) Layer creation
+        let geoLayer;
+        function buildLayer() {
+            if (geoLayer) map.removeLayer(geoLayer);
+
+            geoLayer = L.geoJSON(world, {
+                style: f => {
+                    const iso2 = (f.properties.cca2 || '').toUpperCase();
+                    const c = counts[iso2] || 0;
+                    return { weight: 0.7, color: '#666', fillColor: getFillByCount(c), fillOpacity: 0.9 };
+                },
+                onEachFeature: (f, layer) => {
+                    const iso2 = (f.properties.cca2 || '').toUpperCase();
+                    const name = (f.properties.name && f.properties.name.common) ? f.properties.name.common : (f.properties.name || iso2);
+                    const c = counts[iso2] || 0;
+
+                    // Hover styling
+                    layer.on('mouseover', () => {
+                        layer.setStyle({ weight: 1.5, color: '#111' });
+                        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) layer.bringToFront();
+                    });
+                    layer.on('mouseout', () => geoLayer.resetStyle(layer));
+
+                    // Click -> zoom + popup with button that opens the prefilled Issue URL
+                    layer.on('click', (e) => {
+                        map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+
+                        const title = `hi|${iso2}`;
+                        const body = `Just click "Submit new issue" to say hi from ${iso2}.`;
+                        const url = new URL('https://github.com/buralog/buralog/issues/new');
+                        url.searchParams.set('title', title);
+                        url.searchParams.set('labels', 'country-claim');
+                        url.searchParams.set('body', body);
+
+                        const html = `
+            <div>
+              <strong>${flagEmoji(iso2)} ${name}</strong><br/>
+              ${c} hello${c === 1 ? '' : 's'}
+              <div><a class="popup-btn" target="_top" href="${url.toString()}">Say hi from ${iso2} →</a></div>
+            </div>
+          `;
+                        layer.bindPopup(html, { autoPanPadding: [20, 20] }).openPopup(e.latlng);
+                    });
+
+                    // Optional: quick tooltip on hover
+                    layer.bindTooltip(`${flagEmoji(iso2)} ${name}`, { sticky: true, opacity: 0.9 });
+                }
+            }).addTo(map);
+        }
+        buildLayer();
+
+        // 6) Add a simple Reset control (back to world view)
+        const Reset = L.Control.extend({
+            onAdd: function () {
+                const btn = L.DomUtil.create('button', 'leaflet-bar');
+                btn.textContent = 'Reset';
+                btn.title = 'Reset view';
+                btn.style.cursor = 'pointer';
+                btn.style.background = '#fff';
+                btn.style.border = '1px solid #ddd';
+                btn.style.padding = '6px 10px';
+                btn.style.borderRadius = '6px';
+                L.DomEvent.on(btn, 'click', (e) => {
+                    L.DomEvent.stopPropagation(e);
+                    map.closePopup();
+                    map.fitWorld({ animate: true, padding: [30, 30] });
+                });
+                return btn;
+            },
+            onRemove: () => { }
         });
-    }());
+        map.addControl(new Reset({ position: 'topleft' }));
+
+        // 7) If counts ever change and you want to refresh colors without reload:
+        // window.refreshHelloCounts = function(newCounts){ counts = newCounts; buildLayer(); };
+    })();
 </script>
 
 </html>
