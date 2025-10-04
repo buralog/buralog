@@ -1,7 +1,9 @@
+# .github/workflows/pages.yml
 name: Deploy Pages
+
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]   # <-- change to your default branch if not 'main'
   workflow_dispatch: {}
 
 permissions:
@@ -16,13 +18,23 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    # This environment name must be exactly 'github-pages'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      # REQUIRED: sets up the Pages build context
+      - uses: actions/configure-pages@v5
+
+      # Upload the folder that contains index.html
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
-      - name: Deploy to GitHub Pages
+      # REQUIRED: actually deploys the artifact to the Pages environment
+      - id: deployment
         uses: actions/deploy-pages@v4
