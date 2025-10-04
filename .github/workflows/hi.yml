@@ -125,7 +125,7 @@ jobs:
         run: |
           CHANGED=$(test -s /tmp/changed.flag && echo "yes" || echo "no")
           if [ "$CHANGED" = "yes" ]; then
-            gh issue comment ${{ github.event.issue.number }} --body "Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title##hi| }}**. The map & stats are updated. ✨"
+            gh issue comment ${{ github.event.issue.number }} --body "Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title }}**. The map & stats are updated. ✨"
           else
             gh issue comment ${{ github.event.issue.number }} --body "Hey @${{ github.event.issue.user.login }} — your selection didn’t change anything (same country as before or limit reached)."
           fi
