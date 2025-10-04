@@ -1,6 +1,22 @@
+name: Hi Map
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: world-hi-updates
+  cancel-in-progress: false
+
 jobs:
   handle-hi:
     runs-on: ubuntu-latest
+    # Only proceed for issues like: title starts with "hi|" + label present + not a bot
     if: startsWith(github.event.issue.title, 'hi|') && contains(github.event.issue.labels.*.name, 'country-claim') && !endsWith(github.event.issue.user.login, '[bot]')
     steps:
       - uses: actions/checkout@v4
@@ -10,47 +26,70 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Update ledger and README
-        id: update
+      - name: Ensure data + template exist
+        run: |
+          mkdir -p data assets
+          [ -f data/visitors.json ] || echo '{"countries":{},"firstVisitor":{},"byUser":{},"updatedAt":""}' > data/visitors.json
+          [ -f README.tpl.md ] || cat > README.tpl.md <<'TPL'
+          # 🌍 Say Hi From Your Country
+
+          ![World map](assets/world.svg)
+
+          **Say hi → [Open the interactive map](https://buralog.github.io/buralog/)**
+
+          ## Stats
+          - **Total countries:** {{TOTAL_COUNTRIES}}
+          - **Total hellos:** {{TOTAL_HELLOS}}
+
+          ## Visitors by Country
+          {{COUNTRY_TABLE}}
+
+          _Last updated: {{UPDATED_AT}}_
+          TPL
+          [ -f assets/world.svg ] || echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><text x="5" y="25">World map placeholder</text></svg>' > assets/world.svg
+
+      - name: Update guestbook and README
+        env:
+          ACTOR: ${{ github.event.issue.user.login }}
+          TITLE: ${{ github.event.issue.title }}
         run: |
           node - <<'NODE'
           const fs = require('fs');
 
           const ACTOR = process.env.ACTOR;
-          const TITLE = process.env.TITLE;
-          const ISO = TITLE.split('|')[1]?.trim()?.toUpperCase();
-          if(!ISO || !/^[A-Z]{2}$/.test(ISO)) {
-            console.log('Bad ISO'); process.exit(0);
+          const TITLE = process.env.TITLE || '';
+          const ISO = (TITLE.split('|')[1]||'').trim().toUpperCase();
+
+          if (!/^[A-Z]{2}$/.test(ISO)) {
+            console.log('Invalid ISO, skipping'); process.exit(0);
           }
 
-          const dataPath = 'data/visitors.json';
-          const raw = fs.existsSync(dataPath) ? JSON.parse(fs.readFileSync(dataPath,'utf8')) : {countries:{}, firstVisitor:{}, byUser:{}, updatedAt:""};
+          const path = 'data/visitors.json';
+          const raw = fs.existsSync(path) ? JSON.parse(fs.readFileSync(path,'utf8')) : {countries:{},firstVisitor:{},byUser:{},updatedAt:""};
           raw.countries ||= {}; raw.firstVisitor ||= {}; raw.byUser ||= {};
 
           const user = raw.byUser[ACTOR] || {count:0,last:null,firstAt:null};
-          // limit: 1 initial + 1 change (max 2 writes)
+
+          let changed = false;
           if (user.count >= 2) {
-            fs.writeFileSync('/tmp/noop','1'); // signal later
+            console.log('User limit reached, no-op');
+          } else if (user.last === ISO) {
+            console.log('Same country as last, no-op');
           } else {
-            // ignore same-country repeat
-            if (user.last !== ISO) {
-              raw.countries[ISO] = (raw.countries[ISO]||0) + 1;
-              if (!raw.firstVisitor[ISO]) raw.firstVisitor[ISO] = ACTOR;
-              user.count += 1; user.last = ISO; if (!user.firstAt) user.firstAt = new Date().toISOString();
-              raw.byUser[ACTOR] = user;
-              raw.updatedAt = new Date().toISOString();
-              fs.writeFileSync(dataPath, JSON.stringify(raw, null, 2));
-            } else {
-              fs.writeFileSync('/tmp/noop','1');
-            }
+            raw.countries[ISO] = (raw.countries[ISO]||0)+1;
+            if (!raw.firstVisitor[ISO]) raw.firstVisitor[ISO] = ACTOR;
+            user.count += 1; user.last = ISO; if (!user.firstAt) user.firstAt = new Date().toISOString();
+            raw.byUser[ACTOR] = user;
+            raw.updatedAt = new Date().toISOString();
+            fs.writeFileSync(path, JSON.stringify(raw,null,2));
+            changed = true;
           }
 
-          // Build README from template (simple injection)
+          // Build README from template
           const tpl = fs.readFileSync('README.tpl.md','utf8');
           const countries = Object.entries(raw.countries).sort((a,b)=> b[1]-a[1]);
-          const totalHellos = countries.reduce((s, [,c])=>s+c, 0);
+          const totalHellos = countries.reduce((s,[,c])=>s+c,0);
           const totalCountries = countries.length;
-
           const table = ['| Country | Hellos | First |','|---|---:|---|', ...countries.map(([iso,count])=>{
             const first = raw.firstVisitor[iso] ? `@${raw.firstVisitor[iso]}` : '—';
             return `| ${iso} | ${count} | ${first} |`;
@@ -63,29 +102,31 @@ jobs:
             .replace('{{UPDATED_AT}}', raw.updatedAt || new Date().toISOString());
 
           fs.writeFileSync('README.md', out);
+
+          // Write a small file to signal whether anything changed
+          fs.writeFileSync('/tmp/changed.flag', changed ? '1' : '');
           NODE
-        env:
-          ACTOR: ${{ github.event.issue.user.login }}
-          TITLE: ${{ github.event.issue.title }}
 
       - name: Commit changes (if any)
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "world-hi: update by ${{ github.event.issue.user.login }}" || echo "No changes to commit"
-          git push || true
+          if [ -s /tmp/changed.flag ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "world-hi: update by ${{ github.event.issue.user.login }}"
+            git push
+          else
+            echo "No changes to commit"
+          fi
 
       - name: Thank and close
-        if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          MSG="Thanks @${{ github.event.issue.user.login }}!"
-          if [ -f /tmp/noop ]; then
-            MSG="$MSG Your selection didn't change anything (limit reached or same country)."
+          CHANGED=$(test -s /tmp/changed.flag && echo "yes" || echo "no")
+          if [ "$CHANGED" = "yes" ]; then
+            gh issue comment ${{ github.event.issue.number }} --body "Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title##hi| }}**. The map & stats are updated. ✨"
           else
-            MSG="$MSG Added your hello from **${{ github.event.issue.title##hi| }}**. The map & stats are updated."
+            gh issue comment ${{ github.event.issue.number }} --body "Hey @${{ github.event.issue.user.login }} — your selection didn’t change anything (same country as before or limit reached)."
           fi
-          gh issue comment ${{ github.event.issue.number }} --body "$MSG"
-          gh issue close   ${{ github.event.issue.number }}
+          gh issue close ${{ github.event.issue.number }}
