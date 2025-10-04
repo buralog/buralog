@@ -1,16 +1,6 @@
 {
-  "countries": {
-    "TR": 1
-  },
-  "firstVisitor": {
-    "TR": "buralog"
-  },
-  "byUser": {
-    "buralog": {
-      "count": 1,
-      "last": "TR",
-      "firstAt": "2025-10-04T21:48:22.760Z"
-    }
-  },
-  "updatedAt": "2025-10-04T21:48:22.760Z"
+  "countries": {},
+  "firstVisitor": {},
+  "byUser": {},
+  "updatedAt": ""
 }
