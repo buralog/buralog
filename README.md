@@ -1,6 +1,6 @@
 # 🌍 Say Hi From Your Country
 
-![World map](assets/world.svg)
+![World map](https://raw.githubusercontent.com/buralog/buralog/main/assets/world.svg)
 
 **Click your country here → [Open the interactive map](https://buralog.github.io/buralog/)**
 
