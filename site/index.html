@@ -17,13 +17,25 @@
         margin-bottom: 12px;
     }
 
-    .map {
+    .map-wrap {
+        position: relative;
+        display: inline-block;
         max-width: 100%;
         border: 1px solid #eee;
         border-radius: 12px;
         overflow: hidden;
     }
 
+    .map {
+        display: block;
+        width: min(100%, 1200px);
+        height: auto;
+        aspect-ratio: 3 / 2;
+        /* keeps space reserved while loading */
+        background: #fafafa;
+    }
+
+    /* Hover outline for countries still comes from your SVG’s <a><path>… */
     a path {
         cursor: pointer;
     }
@@ -33,6 +45,32 @@
         outline: none;
         stroke: #000;
         stroke-width: .5;
+    }
+
+    /* Pan/zoom controls */
+    .pz-controls {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        display: flex;
+        gap: 6px;
+        z-index: 5;
+    }
+
+    .pz-btn {
+        appearance: none;
+        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+    }
+
+    .pz-btn:hover {
+        background: #f5f5f5;
     }
 
     .note {
@@ -46,10 +84,81 @@
     <p>Click your country to open a pre-filled GitHub Issue. Submit it to light up the map on my profile.</p>
 </header>
 
-<!-- We embed the clickable SVG as a document so links work -->
-<object class="map" data="./assets/world.clickable.svg" type="image/svg+xml"
-    aria-label="Interactive world map"></object>
+<div class="map-wrap">
+    <!-- Controls overlay -->
+    <div class="pz-controls" aria-label="Map controls">
+        <button class="pz-btn" id="btn-reset" type="button" title="Reset view">Reset</button>
+        <button class="pz-btn" id="btn-zoom-out" type="button" title="Zoom out">−</button>
+        <button class="pz-btn" id="btn-zoom-in" type="button" title="Zoom in">+</button>
+    </div>
+
+    <!-- We embed the clickable SVG as a document so its <a> links work.
+       Important: inside the SVG, keep target="_top" on <a> so it can break out of the object. -->
+    <object id="world" class="map" data="./assets/world.clickable.svg" type="image/svg+xml"
+        aria-label="Interactive world map"></object>
+</div>
 
 <p class="note">Powered by GitHub Actions · We only record your public GitHub handle and chosen country.</p>
+
+<!-- Panzoom (actively maintained) -->
+<script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+<script>
+    (function () {
+        const obj = document.getElementById('world');
+        let panzoomInstance = null;
+
+        obj.addEventListener('load', () => {
+            // Access the inline SVG inside the <object>
+            const doc = obj.contentDocument;
+            if (!doc) return;
+            const svg = doc.querySelector('svg');
+            if (!svg) return;
+
+            // Ensure the SVG has a viewBox (needed for proper zoom). Add one in the file if missing.
+            // Initialize Panzoom on the SVG root
+            panzoomInstance = Panzoom(svg, {
+                maxScale: 10,
+                minScale: 0.5,
+                step: 0.25,
+                contain: 'outside',     // keep panning reasonable
+                cursor: 'grab',         // nice UX
+                panOnlyWhenZoomed: false
+            });
+
+            // Wheel to zoom
+            svg.addEventListener('wheel', panzoomInstance.zoomWithWheel, { passive: false });
+
+            // Double click to zoom in a bit
+            svg.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+                panzoomInstance.zoomIn({ animate: true, step: 0.5, focal: e });
+            });
+
+            // Make panning feel good (grab cursor on drag)
+            svg.addEventListener('mousedown', () => svg.style.cursor = 'grabbing');
+            doc.addEventListener('mouseup', () => svg.style.cursor = 'grab');
+
+            // Hook up buttons
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                panzoomInstance.reset({ animate: true });
+            });
+            document.getElementById('btn-zoom-in').addEventListener('click', () => {
+                panzoomInstance.zoomIn({ animate: true });
+            });
+            document.getElementById('btn-zoom-out').addEventListener('click', () => {
+                panzoomInstance.zoomOut({ animate: true });
+            });
+
+            // Optional: fit & center initial view a bit nicer
+            // Panzoom works with transforms; to "fit", you can gently zoom out once:
+            // panzoomInstance.reset({ animate: false });
+        });
+
+        // Fallback: if the object fails to load, show a gentle message (optional)
+        obj.addEventListener('error', () => {
+            console.warn('SVG failed to load. Check the path to assets/world.clickable.svg.');
+        });
+    }());
+</script>
 
 </html>
