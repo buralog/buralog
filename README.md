@@ -1,16 +1,17 @@
 # 🌍 Say Hi From Your Country
 
-![World map](https://raw.githubusercontent.com/buralog/buralog/main/assets/world.svg)
+![World map](assets/world.svg)
 
 **Click your country here → [Open the interactive map](https://buralog.github.io/buralog/)**
 
 ## Stats
-- **Total countries:** 1
-- **Total hellos:** 1
+- **Total countries:** 2
+- **Total hellos:** 2
 
 ## Visitors by Country
 | Country | Hellos | First |
 |---|---:|---|
 | TR | 1 | @buralog |
+| BR | 1 | @buralog |
 
-_Last updated: 2025-10-04T22:09:37.446Z_
+_Last updated: 2025-10-05T20:10:07.442Z_
