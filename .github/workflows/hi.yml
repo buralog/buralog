@@ -46,7 +46,7 @@ jobs:
 
           _Last updated: {{UPDATED_AT}}_
           TPL
-          [ -f assets/world.svg ] || echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><text x="5" y="25">World map placeholder</text></svg>' > assets/world.svg
+          [ -f assets/world.template.svg ] || echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><g id="legend"></g><text x="5" y="25">World map template placeholder</text></svg>' > assets/world.template.svg
 
       - name: Update guestbook and README
         env:
@@ -107,6 +107,11 @@ jobs:
           fs.writeFileSync('/tmp/changed.flag', changed ? '1' : '');
           NODE
 
+      - name: Build choropleth world map SVG
+        run: |
+         npm i d3-geo xmldom node-fetch@2 --silent
+         node scripts/build-svg-world-map.js
+
       - name: Commit changes (if any)
         run: |
           if [ -s /tmp/changed.flag ]; then
@@ -130,8 +135,7 @@ jobs:
               --body "Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title }}**. The map & stats are updated. ✨"
           else
             gh issue comment ${{ github.event.issue.number }} \
-              --body "Hey @${{ github.event.issue.user.login }} — your selection didn’t change anything (same country as before or limit reached)."
+              --body "Hey @${{ github.event.issue.user.login }} — your selection didn't change anything (same country as before or limit reached)."
           fi
           gh issue edit ${{ github.event.issue.number }} --add-label "hello-world"
           gh issue close ${{ github.event.issue.number }} --comment "Closed automatically ✅"
-
