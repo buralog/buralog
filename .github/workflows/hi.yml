@@ -71,7 +71,7 @@ jobs:
           const user = raw.byUser[ACTOR] || {count:0,last:null,firstAt:null};
 
           let changed = false;
-          if (user.count >= 2) {
+          if (user.count >= 100) {
             console.log('User limit reached, no-op');
           } else if (user.last === ISO) {
             console.log('Same country as last, no-op');
