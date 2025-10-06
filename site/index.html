@@ -2,170 +2,483 @@
 <html lang="en">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Say Hi from Your Country 🌍</title>
+<title>Say Hello from 🌍</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-    :root {
-        --pad: 20px;
-    }
+  :root{
+    --bg:#f6f8fa; --card:#fff; --text:#0f172a; --muted:#6b7280; --border:#e5e7eb; --link:#0366d6;
+    --success-a:#22c55e; --success-b:#16a34a;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--text); background:var(--bg);
+  }
 
-    body {
-        font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        margin: var(--pad);
-    }
+  /* Layout */
+  .app{
+    display:grid; grid-template-columns:1fr min(420px,35vw);
+    gap:16px; height:100vh; padding:16px; box-sizing:border-box;
+  }
+  #map{height:100%; border:1px solid var(--border); border-radius:12px; overflow:hidden}
+  .leaflet-container{background:#eaf4f6}
 
-    header {
-        margin-bottom: 12px;
-    }
+  /* Right panel as a column; footer sticks to bottom via spacer */
+  aside{
+    display:flex; flex-direction:column; gap:14px; font-size:17px; min-height:0;
+  }
+  .panel{
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,.06); padding:16px;
+  }
+  .panel h2{margin:0 0 10px; font-size:19px}
+  .small{color:var(--muted); font-size:13px}
+  .spacer{flex:1 1 auto;} /* pushes footer to bottom */
 
-    #map {
-        height: 72vh;
-        min-height: 420px;
-        border: 1px solid #eee;
-        border-radius: 12px;
-    }
+  /* KPIs + refresh */
+  .kpis{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px}
+  .kpi{border:1px solid var(--border); border-radius:10px; padding:12px; text-align:center}
+  .kpi .num{font-size:28px; font-weight:800; line-height:1.1}
+  .kpi .label{font-size:12px; color:var(--muted)}
+  .stats-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
+  .stats-header h2{margin:0}
+  .stats-row{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .refresh-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 10px; border-radius:8px; border:1px solid #d0d7de; background:#fff;
+    font-weight:600; font-size:14px; cursor:pointer;
+    box-shadow:0 1px 2px rgba(0,0,0,.06);
+  }
+  .refresh-btn:hover{background:#f6f8fa}
+  .refresh-btn[disabled]{opacity:.6; cursor:not-allowed}
 
-    .leaflet-container {
-        background: #f8fafb;
-    }
+  /* Top list */
+  .toplist{margin:6px 0 0; padding:0; list-style:none}
+  .toplist li{
+    display:flex; align-items:center; gap:8px; padding:8px 6px;
+    border-bottom:1px dashed var(--border); cursor:pointer;
+  }
+  .toplist li:hover{background:#f9fafb}
+  .toplist li:last-child{border-bottom:0}
+  .flagchip{display:inline-flex; align-items:center; justify-content:center; width:20px; height:15px}
+  .flagchip-img{width:20px; height:15px; border-radius:2px; box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+  .countryname{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .count{font-weight:700}
 
-    .popup-btn {
-        display: inline-block;
-        margin-top: 8px;
-        padding: 6px 10px;
-        border: 1px solid #d0d7de;
-        border-radius: 8px;
-        background: #fff;
-        text-decoration: none;
-        font-weight: 600;
-    }
+  /* "Say hello" panel */
+  .hello-title{display:flex; align-items:center; gap:10px}
+  .hello-flag img{width:20px; height:15px; border-radius:2px; box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+  .hello-muted{color:var(--muted); font-weight:600}
+  .say-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 14px; border-radius:12px; border:0;
+    background:linear-gradient(135deg, var(--success-a), var(--success-b));
+    color:#fff; font-weight:800; font-size:16px; cursor:pointer;
+    box-shadow:0 6px 18px rgba(22,163,74,.25);
+    transition:transform .05s ease, filter .2s ease;
+  }
+  .say-btn:hover{filter:brightness(1.05)}
+  .say-btn:active{transform:translateY(1px)}
+  .say-btn[disabled]{opacity:.6; cursor:not-allowed; filter:grayscale(.3)}
 
-    .popup-btn:hover {
-        background: #f6f8fa;
-    }
+  /* Tooltip styling - wider and better formatted */
+  .country-tooltip{
+    background:#fff; color:#111; border:1px solid #e5e7eb; border-radius:10px;
+    padding:10px 14px; box-shadow:0 4px 12px rgba(0,0,0,.15);
+    min-width:180px; max-width:240px; line-height:1.4; font-size:14px;
+  }
+  .tooltip-title{
+    display:flex; align-items:center; gap:8px; font-weight:700; 
+    margin-bottom:6px; font-size:15px;
+  }
+  .tooltip-flag{width:20px; height:15px; border-radius:2px; 
+    box-shadow:0 0 0 1px rgba(0,0,0,.08); flex:0 0 20px;}
+  .tooltip-count{color:#666; font-size:13px; margin-bottom:4px}
+  .tooltip-hint{color:#888; font-size:12px; font-style:italic}
 
-    .note {
-        opacity: .75;
-        margin-top: 10px;
-    }
+  /* Remove tooltip defaults */
+  .leaflet-tooltip.custom-tip,
+  .leaflet-tooltip.custom-tip .leaflet-tooltip-content{
+    background:transparent!important; color:inherit!important;
+    border:none!important; border-radius:0!important; padding:0!important; 
+    box-shadow:none!important; margin:0!important;
+  }
+  .leaflet-tooltip.custom-tip::before{display:none!important}
+
+  /* Hide popup completely */
+  .leaflet-popup{display:none!important}
+
+  /* Remove focus outline on map features */
+  .leaflet-interactive:focus{outline:none!important}
+  svg.leaflet-zoom-animated path:focus{outline:none!important}
+
+  /* Reset button */
+  .leaflet-control button.leaflet-bar{
+    cursor:pointer; background:#fff; border:1px solid #ddd; 
+    padding:6px 10px; border-radius:6px; box-shadow:0 1px 2px rgba(0,0,0,.06)
+  }
+
+  /* Legend (choropleth) */
+  .legend{
+    color:#444; background:#fff; padding:10px; border:1px solid var(--border);
+    border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.08);
+    font-size:13px; line-height:1.2;
+  }
+  .legend-title{font-weight:700; margin-bottom:6px}
+  .legend-row{display:flex; align-items:center; gap:8px; margin:6px 0}
+  .legend .swatch{
+    width:18px; height:18px; border:1px solid rgba(0,0,0,.08); flex:0 0 18px; opacity:.9;
+  }
+
+  /* Project panel */
+  .project-text{line-height:1.6; font-size:15px}
+  .project-text a{color:var(--link); text-decoration:none; font-weight:600}
+  .project-text a:hover{text-decoration:underline}
+
+  /* Wrap long country names in tooltip */
+  .tooltip-title-name{
+    display:block;
+    white-space:normal;           /* allow wrapping */
+    overflow-wrap:anywhere;       /* break long tokens if needed */
+    word-break:normal;            /* prefer natural wrapping */
+    hyphens:auto;                 /* hyphenate where possible */
+    line-height:1.25;
+  }
+  .country-tooltip{ max-width: 280px; }  /* give a bit more room */
+
+  /* Footer (subtle) */
+  .footer {
+    text-align:center;
+    font-size:14px;
+    color:var(--muted);
+    padding:10px 0;
+    margin-top:12px;
+    opacity:0.7;
+    font-weight:500;
+  }
+  .footer:hover { opacity:1; transition:opacity .2s ease; }
+
+  @media (max-width:900px){
+    .app{grid-template-columns:1fr; height:auto}
+    #map{height:64vh; min-height:420px}
+  }
 </style>
 
-<header>
-    <h1>Say Hi from Your Country 🌍</h1>
-    <p>Click a country to open a pre-filled GitHub Issue. Submit it to light up the map on my profile.</p>
-</header>
+<div class="app">
+  <div id="map" role="region" aria-label="Interactive world map"></div>
 
-<div id="map" role="region" aria-label="Interactive world map"></div>
-<p class="note">Powered by GitHub Actions · We only record your public GitHub handle and chosen country.</p>
+  <aside aria-label="Right panel">
+    <div class="panel">
+      <div class="stats-header">
+        <h2>Live Stats</h2>
+        <button class="refresh-btn" id="refresh-btn" title="Reload latest data">Refresh</button>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="num" id="kpi-total">0</div><div class="label">Total hellos</div></div>
+        <div class="kpi"><div class="num" id="kpi-countries">0</div><div class="label">Countries lit</div></div>
+      </div>
+      <div class="small"><span id="last-updated">Loading…</span></div>
+    </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
+    <!-- Say hello panel (moved above Top Countries and simplified) -->
+    <div class="panel" id="hello-panel">
+      <h2 class="hello-title">
+        <span class="hello-flag" id="hello-flag" hidden></span>
+        <span id="hello-title-text" class="hello-muted">Select a country on the map</span>
+      </h2>
+      <button class="say-btn" id="say-btn" disabled>👋 Say hello</button>
+    </div>
+
+    <div class="panel">
+      <h2>Top Countries</h2>
+      <ul class="toplist" id="top-list"></ul>
+    </div>
+    
+    
+    <div class="spacer"></div> <!-- pushes footer down -->
+
+    <div class="panel">
+      <h2>About This Project</h2>
+      <div class="project-text">
+        An interactive map where visitors can say hello from their country! Click any country on the map 
+        to select it, then use the "Say hello" button above. This creates a GitHub Issue on 
+        <a href="https://github.com/buralog/buralog" target="_blank" rel="noopener">buralog/buralog</a> 
+        that automatically updates the map via GitHub Actions. Watch the world light up as more people join! 🌍
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    (async function () {
-        const map = L.map('map', { worldCopyJump: true, zoomSnap: 0.25, zoomDelta: 0.5 });
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-        map.fitWorld({ animate: false, padding: [30, 30] });
+(function(){
+  // Map init
+  var map = L.map('map', {
+    worldCopyJump:false, maxBoundsViscosity:0.3, minZoom:2, maxZoom:8,
+    maxBounds:[[-90,-180],[90,180]], noWrap:true
+  }).setView([20,0],2);
 
-        // Load your live counts
-        let counts = {};
-        try {
-            const res = await fetch('https://raw.githubusercontent.com/buralog/buralog/main/data/visitors.json', { cache: 'no-store' });
-            if (res.ok) {
-                const json = await res.json();
-                counts = (json && json.countries) ? json.countries : {};
-            }
-        } catch (_) { }
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    noWrap:true, attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-        // ✅ Reliable countries GeoJSON (has properties.name and properties.iso_a2)
-        const worldUrl = 'https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json';
-        const world = await fetch(worldUrl, { cache: 'force-cache' }).then(r => r.json());
+  // Data state
+  var counts = {};
+  var updatedAt = null;
+  var world;            // geojson data
+  var layer;            // Leaflet geojson layer
+  var isoToName = {};   // map for sidebar names
+  var selected = null;  // { iso2, name, count }
 
-        function getFillByCount(c) {
-            if (c >= 50) return '#2e7d32';
-            if (c >= 10) return '#66bb6a';
-            if (c >= 1) return '#a5d6a7';
-            return '#ffffff';
-        }
-        function flagEmoji(iso2) {
-            return iso2.toUpperCase().replace(/./g, c =>
-                String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)
-            );
-        }
+  // DOM
+  var kpiTotal = document.getElementById('kpi-total');
+  var kpiCountries = document.getElementById('kpi-countries');
+  var lastUpdatedEl = document.getElementById('last-updated');
+  var topList = document.getElementById('top-list');
+  var helloFlag = document.getElementById('hello-flag');
+  var helloTitle = document.getElementById('hello-title-text');
+  var sayBtn = document.getElementById('say-btn');
+  var refreshBtn = document.getElementById('refresh-btn');
 
-        let geoLayer;
-        function buildLayer() {
-            if (geoLayer) map.removeLayer(geoLayer);
+  // -------- Flag helpers (with Northern Cyprus fallback) --------
+  var TRNC_SVG = "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='15' viewBox='0 0 20 15'>"
+    + "<rect width='20' height='15' fill='#fff'/>"
+    + "<rect y='1' width='20' height='2' fill='#e30a17'/>"
+    + "<rect y='12' width='20' height='2' fill='#e30a17'/>"
+    + "<circle cx='8' cy='7.5' r='3' fill='#e30a17'/>"
+    + "<circle cx='9' cy='7.5' r='2.2' fill='#fff'/>"
+    + "<polygon points='12,7.5 10.8,7.9 11.2,6.7 10.3,5.8 11.5,5.7 12,4.6 12.5,5.7 13.7,5.8 12.8,6.7 13.2,7.9' fill='#e30a17'/>"
+    + "</svg>";
 
-            geoLayer = L.geoJSON(world, {
-                style: f => {
-                    const iso2 = (f.properties.iso_a2 || '').toUpperCase();
-                    const c = counts[iso2] || 0;
-                    return { weight: 0.7, color: '#666', fillColor: getFillByCount(c), fillOpacity: 0.9 };
-                },
-                onEachFeature: (f, layer) => {
-                    const iso2 = (f.properties.iso_a2 || '').toUpperCase();
-                    const name = f.properties.name || iso2;
-                    const c = counts[iso2] || 0;
+  function isNorthernCyprus(iso2, name){
+    return (iso2 && iso2.toUpperCase()==='XC') || /Northern Cyprus/i.test(name||'');
+  }
+  function flagURL(iso2, name){
+    if(isNorthernCyprus(iso2, name)){
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(TRNC_SVG);
+    }
+    var iso = (iso2||'').toLowerCase();
+    return iso ? ('https://flagcdn.com/20x15/'+iso+'.png') : '';
+  }
 
-                    layer.on('mouseover', () => {
-                        layer.setStyle({ weight: 1.5, color: '#111' });
-                        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) layer.bringToFront();
-                    });
-                    layer.on('mouseout', () => geoLayer.resetStyle(layer));
+  // Choropleth helpers
+  function fillColorFor(c){ if(c>=50) return '#2e7d32'; if(c>=10) return '#66bb6a'; if(c>=1) return '#a5d6a7'; return '#ffffff'; }
+  function baseOpacityFor(c){ return c>=1 ? 0.9 : 0.02; }
 
-                    layer.on('click', (e) => {
-                        map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+  // Property helpers
+  function getISO2(p){
+    var raw = p.ISO_A2_EH||p.ISO_A2||p.iso_a2||p.ISO2||'';
+    var iso = String(raw).toUpperCase();
+    // Accept custom XC for Northern Cyprus
+    if(/Northern Cyprus/i.test(p.admin||p.name_long||p.name||'')) return 'XC';
+    return /^[A-Z]{2}$/.test(iso)?iso:'';
+  }
+  function getName(p,iso2){ return (p.admin||p.name_long||p.name||p.formal_en||p.SOVEREIGNT||iso2||'Unknown'); }
 
-                        const title = `hi|${iso2}`;
-                        const body = `Just click "Submit new issue" to say hi from ${iso2}.`;
-                        const url = new URL('https://github.com/buralog/buralog/issues/new');
-                        url.searchParams.set('title', title);
-                        url.searchParams.set('labels', 'country-claim');
-                        url.searchParams.set('body', body);
+  function helloLine(n){ return n>=1 ? (n===1 ? '1 hello' : (n+' hellos')) : 'No hellos yet — be the first!'; }
 
-                        const html = `
-            <div>
-              <strong>${flagEmoji(iso2)} ${name}</strong><br/>
-              ${c} hello${c === 1 ? '' : 's'}
-              <div><a class="popup-btn" target="_top" href="${url.toString()}">Say hi from ${iso2} →</a></div>
-            </div>
-          `;
-                        layer.bindPopup(html, { autoPanPadding: [20, 20] }).openPopup(e.latlng);
-                    });
+  function buildTooltipEl(iso2, name, n){
+    var el = document.createElement('div');
+    el.className = 'country-tooltip';
+    var fURL = flagURL(iso2, name);
+    var flag = fURL ? '<img class="tooltip-flag" alt="'+name+' flag" src="'+fURL+'" loading="lazy">' : '';
+    el.innerHTML = 
+      '<div class="tooltip-title">'+flag+'<div class="tooltip-title-name">'+name+'</div></div>' +
+      '<div class="tooltip-count">'+helloLine(n)+'</div>' +
+      '<div class="tooltip-hint">Click to say hello!</div>';
+    return el;
+  }
 
-                    layer.bindTooltip(`${flagEmoji(iso2)} ${name}`, { sticky: true, opacity: 0.9 });
-                }
-            }).addTo(map);
-        }
-        buildLayer();
+  function computeKPIs(){
+    var total=0, lit=0;
+    for (var k in counts){ if(!counts.hasOwnProperty(k)) continue; var v=Number(counts[k])||0; total+=v; if(v>0) lit++; }
+    kpiTotal.textContent = String(total);
+    kpiCountries.textContent = String(lit);
+    lastUpdatedEl.textContent = updatedAt ? ('Last updated: ' + new Date(updatedAt).toLocaleString())
+                                          : 'Data source: visitors.json';
+  }
 
-        // Reset control
-        const Reset = L.Control.extend({
-            onAdd: function () {
-                const btn = L.DomUtil.create('button', 'leaflet-bar');
-                btn.textContent = 'Reset';
-                btn.title = 'Reset view';
-                btn.style.cursor = 'pointer';
-                btn.style.background = '#fff';
-                btn.style.border = '1px solid #ddd';
-                btn.style.padding = '6px 10px';
-                btn.style.borderRadius = '6px';
-                L.DomEvent.on(btn, 'click', (e) => {
-                    L.DomEvent.stopPropagation(e);
-                    map.closePopup();
-                    map.fitWorld({ animate: true, padding: [30, 30] });
-                });
-                return btn;
-            },
-            onRemove: () => { }
-        });
-        map.addControl(new Reset({ position: 'topleft' }));
-    })();
+  function renderTopList(){
+    var entries = [];
+    for (var code in counts){ if(!counts.hasOwnProperty(code)) continue; var n = Number(counts[code])||0; if(n>0) entries.push([code, n]); }
+    entries.sort(function(a,b){ return b[1]-a[1]; });
+    var top = entries.slice(0,5);
+
+    if(top.length===0){
+      topList.innerHTML = '<li><span class="small">No hellos yet — be the first!</span></li>';
+      return;
+    }
+    topList.innerHTML = '';
+    for(var i=0;i<top.length;i++){
+      (function(){
+        var iso = top[i][0], n = top[i][1];
+        var name = isoToName[iso] || iso;
+        var img = flagURL(iso, name);
+        var li = document.createElement('li');
+        li.innerHTML =
+          '<span class="flagchip">'+(img?('<img class="flagchip-img" alt="'+name+' flag" src="'+img+'" loading="lazy">'):'')+'</span>'
+          + '<span class="countryname" title="'+name+'">'+name+'</span>'
+          + '<span class="count">'+n+'</span>';
+        topList.appendChild(li);
+      })();
+    }
+  }
+
+  function updateHelloPanel(){
+    if(!selected){
+      helloFlag.hidden = true;
+      helloTitle.textContent = 'Select a country on the map';
+      sayBtn.disabled = true;
+      return;
+    }
+    helloFlag.hidden = false;
+    var img = flagURL(selected.iso2, selected.name);
+    helloFlag.innerHTML = img ? ('<img alt="'+selected.name+' flag" src="'+img+'">') : '';
+    helloTitle.textContent = 'Say hello from ' + selected.name;
+    sayBtn.disabled = false;
+  }
+
+  function bindFeature(f, l){
+    var iso2 = getISO2(f.properties);
+    var name = getName(f.properties, iso2);
+    var n = counts[iso2] || 0;
+
+    l.on('add', function(){ if(l._path) l._path.style.cursor='pointer'; });
+    l.on('mouseover', function(){
+      l.setStyle({weight:1.6, color:'#000', fillOpacity:Math.max(baseOpacityFor(n), .12)});
+      if(!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) l.bringToFront();
+    });
+    l.on('mouseout', function(){ layer.resetStyle(l); });
+
+    l.on('click', function(e){
+      selected = { iso2: iso2, name: name, count: n };
+      updateHelloPanel();
+      map.fitBounds(l.getBounds(), { padding:[20,20] });
+    });
+
+    // Tooltip
+    var tipEl = buildTooltipEl(iso2, name, n);
+    l.bindTooltip(tipEl, {
+      sticky:true, 
+      className:'custom-tip', 
+      direction:'top', 
+      offset:[0,-8], 
+      opacity:1
+    });
+  }
+
+  function buildLayer(){
+    if(layer) map.removeLayer(layer);
+
+    // build iso->name map
+    isoToName = {};
+    for(var i=0;i<world.features.length;i++){
+      var f = world.features[i];
+      var i2 = getISO2(f.properties);
+      if(i2) isoToName[i2] = getName(f.properties,i2);
+    }
+
+    layer = L.geoJSON(world, {
+      smoothFactor:0,
+      style:function(f){
+        var iso2 = getISO2(f.properties); var n = counts[iso2]||0;
+        return {color:'#666', weight:.8, fill:true, fillColor:fillColorFor(n), fillOpacity:baseOpacityFor(n)};
+      },
+      onEachFeature: bindFeature
+    }).addTo(map);
+  }
+
+  // Legend (bottom-right)
+  var legend = L.control({position:'bottomright'});
+  legend.onAdd = function(){
+    var div = L.DomUtil.create('div','legend');
+    var bins = [
+      {label:'0',    color:fillColorFor(0)},
+      {label:'1–9',  color:fillColorFor(1)},
+      {label:'10–49',color:fillColorFor(10)},
+      {label:'50+',  color:fillColorFor(50)}
+    ];
+    var html = '<div class="legend-title">Hellos</div>';
+    for(var j=0;j<bins.length;j++){
+      html += '<div class="legend-row"><span class="swatch" style="background:'+bins[j].color+'"></span><span>'+bins[j].label+'</span></div>';
+    }
+    div.innerHTML = html;
+    return div;
+  };
+  legend.addTo(map);
+
+  // Initial load
+  function setDemoIfEmpty(){
+    if(!counts || Object.keys(counts).length===0){
+      counts = {TR:12,US:8,DE:5,FR:3,JP:2,BR:15,IN:22,GB:7,CN:11};
+    }
+  }
+
+  function loadCounts(cb){
+    var url = 'https://raw.githubusercontent.com/buralog/buralog/main/data/visitors.json?ts=' + Date.now();
+    fetch(url, {cache:'no-store'})
+      .then(function(res){ return res.ok ? res.json() : null; })
+      .then(function(json){
+        if(json && json.countries){ counts = json.countries; updatedAt = json.updatedAt || null; }
+        setDemoIfEmpty();
+        cb && cb();
+      })
+      .catch(function(){
+        setDemoIfEmpty();
+        cb && cb();
+      });
+  }
+
+  function loadWorld(cb){
+    if(world){ cb && cb(); return; }
+    fetch('https://geojson.xyz/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson')
+      .then(function(r){ return r.json(); })
+      .then(function(json){ world = json; cb && cb(); });
+  }
+
+  function refreshAll(){
+    computeKPIs();
+    buildLayer();    // build first so isoToName is ready
+    renderTopList(); // then render list with full names
+    updateHelloPanel();
+  }
+
+  // Wire refresh button
+  refreshBtn.addEventListener('click', function(){
+    refreshBtn.disabled = true;
+    refreshBtn.innerHTML = '⏳ <span style="font-size:13px">Refreshing…</span>';
+    loadCounts(function(){
+      lastUpdatedEl.textContent = updatedAt ? ('Last updated: ' + new Date(updatedAt).toLocaleString())
+                                            : 'Data source: visitors.json';
+      refreshAll();
+      setTimeout(function(){
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = 'Refresh';
+      }, 200);
+    });
+  });
+
+  // Say hello click (attached to the sidebar button)
+  sayBtn.addEventListener('click', function(){
+    if(!selected) return;
+    var url = new URL('https://github.com/buralog/buralog/issues/new');
+    url.searchParams.set('title', 'hi|' + selected.iso2);
+    url.searchParams.set('labels','country-claim');
+    var body = 'Saying hi from ' + selected.name + ' (' + selected.iso2 + ') 👋';
+    body += '\n\n_Submitted from the sidebar button_';
+    url.searchParams.set('body', body);
+    window.top.location.href = url.toString();
+  });
+
+  // Boot
+  loadCounts(function(){
+    loadWorld(function(){
+      refreshAll();
+    });
+  });
+})();
 </script>
-
 </html>
