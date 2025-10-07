@@ -1,23 +1,28 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-07T22:13:39.522Z",
+  "updatedAt": "2025-10-07T22:18:50.446Z",
   "maxChangesPerUser": 3,
   "countries": {
     "GL": {
+      "users": {},
+      "firstUser": "buralog",
+      "lastAt": "2025-10-07T22:13:39.522Z"
+    },
+    "RU": {
       "users": {
         "buralog": true
       },
       "firstUser": "buralog",
-      "lastAt": "2025-10-07T22:13:39.522Z"
+      "lastAt": "2025-10-07T22:18:50.445Z"
     }
   },
   "users": {
     "buralog": {
       "current": {
-        "iso": "GL",
+        "iso": "RU",
         "city": null
       },
-      "changesUsed": 1
+      "changesUsed": 2
     }
   }
 }
