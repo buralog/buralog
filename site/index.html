@@ -202,9 +202,8 @@
     <div class="panel">
       <h2>About This Project</h2>
       <div class="project-text">
-        An interactive map where visitors can say hello from their location! Click any country on the map 
-        to select it, then use the "Say hello" button above. You will be redirected to the GitHub issue page. 
-        Just create the issue without changing anything. This creates a GitHub Issue on 
+        An interactive map where visitors can say hello from their country! Click any country on the map 
+        to select it, then use the "Say hello" button above. This creates a GitHub Issue on 
         <a href="https://github.com/buralog/buralog" target="_blank" rel="noopener">buralog/buralog</a> 
         that automatically updates the map via GitHub Actions. Watch the world light up as more people join! 🌍
       </div>
@@ -309,6 +308,7 @@
     kpiCountries.textContent = String(lit);
     if (updatedAt) {
       lastUpdatedEl.textContent = 'Last updated: ' + new Date(updatedAt).toLocaleString();
+    }
   }
 
   function renderTopList(){
