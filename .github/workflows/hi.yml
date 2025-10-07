@@ -2,22 +2,19 @@ name: Hello World Map
 
 on:
   issues:
-    types: [opened]
-  workflow_dispatch: {}
-
-permissions:
-  contents: write
-  issues: write
-
-concurrency:
-  group: hello-world-updates
-  cancel-in-progress: false
+    types: [opened, labeled, reopened, edited]
 
 jobs:
   handle-hi:
     runs-on: ubuntu-latest
-    # Only proceed if title starts with "hello|" + label present + not a bot
-    if: startsWith(github.event.issue.title, 'hello|') && contains(github.event.issue.labels.*.name, 'country-claim') && !endsWith(github.event.issue.user.login, '[bot]')
+    if: >
+      (startsWith(github.event.issue.title, 'hello|') || startsWith(github.event.issue.title, 'hi|')) &&
+      (
+        contains(github.event.issue.labels.*.name, 'country-claim') ||
+        (github.event.action == 'labeled' && github.event.label.name == 'country-claim')
+      ) &&
+      !endsWith(github.event.issue.user.login, '[bot]')
+    steps:
     steps:
       - uses: actions/checkout@v4
 
