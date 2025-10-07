@@ -14,7 +14,7 @@
 👋 **1** hellos • 🌎 **1** countries
 
 ### 👥 Who Said Hello?
-🇷🇺 [@buralog](https://github.com/buralog)
+🇹🇷 [@buralog](https://github.com/buralog)
 
 </td>
 <td width="20%" valign="top">
@@ -22,7 +22,7 @@
 ## 📋 Hellos by Country
 | Country | Count |
 |---------|------:|
-| 🇷🇺 Russia | 1 |
+| 🇹🇷 Türkiye | 1 |
 </td>
 </tr>
 </table>
@@ -46,4 +46,4 @@ This project uses GitHub Issues + GitHub Actions to keep the map and stats up to
 
 
 --- 
-_Last updated: 2025-10-07T22:18:50.446Z_
+_Last updated: 2025-10-07T23:02:12.795Z_
