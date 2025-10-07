@@ -14,8 +14,12 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
     const data = JSON.parse(fs.readFileSync(visitorsPath, 'utf8'));
 
     const counts = {};
-    for (const [iso, info] of Object.entries(data.countries || {})) {
-        counts[iso] = Object.keys(info.users || {}).length;
+    for (const [isoRaw, info] of Object.entries(data.countries || {})) {
+        const iso = (isoRaw || '').toUpperCase();
+        const count = typeof info === 'number'
+            ? info                                     // legacy numeric
+            : Object.keys((info && info.users) || {}).length; // v3 users map
+        counts[iso] = count;
     }
 
     const totalCountries = Object.values(counts).filter(c => c > 0).length;
