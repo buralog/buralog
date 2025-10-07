@@ -1,8 +1,4 @@
-👋 Hello, I'm Burakhan
-
-I’m a software developer, focused on the web technologies and mobile apps.
-
-# 🌍 Say Hello From Your Country!
+## Say Hello From 🌍!
 
 **Join the global hello wave!** Click your country on the interactive map and leave a hello 👋 
 > [Open interactive map](https://buralog.github.io/buralog/)
@@ -15,7 +11,7 @@ I’m a software developer, focused on the web technologies and mobile apps.
 
 ## 📊 Stats
 
-👋 **1** hellos • 🌎 **1** countries • 🎉 Growing daily!
+👋 **1** hellos • 🌎 **1** countries
 
 ### 👥 Who Said Hello?
 🇷🇺 [@buralog](https://github.com/buralog)
