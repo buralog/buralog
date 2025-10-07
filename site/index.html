@@ -216,13 +216,19 @@
 <script>
 (function(){
   // Map init
+   // Map init
   var map = L.map('map', {
-    worldCopyJump:false, maxBoundsViscosity:0.3, minZoom:2, maxZoom:8,
-    maxBounds:[[-90,-180],[90,180]], noWrap:true
-  }).setView([20,0],2);
+    worldCopyJump: true, 
+    maxBoundsViscosity: 1.0, 
+    minZoom: 2, 
+    maxZoom: 8,
+    maxBounds: [[-85, -180], [85, 180]]
+  }).setView([20, 0], 2);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    noWrap:true, attribution:'&copy; OpenStreetMap contributors'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    noWrap: false, 
+    bounds: [[-85, -180], [85, 180]],
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
   // Data state

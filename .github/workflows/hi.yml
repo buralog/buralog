@@ -93,9 +93,6 @@ jobs:
           _Last updated: {{UPDATED_AT}}_
           TPL
 
-          # Minimal placeholder map template in case your builder needs it
-          [ -f assets/world.template.svg ] || echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><g id="legend"></g><text x="5" y="25">World map template placeholder</text></svg>' > assets/world.template.svg
-
       - name: Update visitors.json and README (v3 schema)
         env:
           ACTOR: ${{ github.event.issue.user.login }}
@@ -292,12 +289,23 @@ jobs:
           node scripts/build-svg-world-map.js
 
       - name: Commit changes (if any)
+        env:
+          ACTOR: ${{ github.event.issue.user.login }}
+          TITLE: ${{ github.event.issue.title }}
         run: |
           if [ -s /tmp/changed.flag ]; then
+            # Parse ISO from title like: "hello|TR - @user says hi"
+            ISO=$(echo "$TITLE" | sed -E 's/^hello\|([A-Za-z]{2}).*/\1/I' | tr '[:lower:]' '[:upper:]')
+
+            # Compute flag emoji in Node (safe & short)
+            FLAG=$(node -e 'const A=0x1F1E6;const iso=(process.env.ISO||"").toUpperCase();if(/^[A-Z]{2}$/.test(iso)){const f=String.fromCodePoint(A+(iso.charCodeAt(0)-65))+String.fromCodePoint(A+(iso.charCodeAt(1)-65));console.log(f)}')
+            
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add -A
-            git commit -m "hello-world: update by ${{ github.event.issue.user.login }}"
+
+            MSG="👋 from ${FLAG:-$ISO} by @${ACTOR}"
+            git commit -m "$MSG"
             git push
           else
             echo "No changes to commit"
