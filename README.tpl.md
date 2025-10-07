@@ -37,12 +37,12 @@ I’m a software developer, focused on the web technologies and mobile apps.
 This project uses GitHub Issues + GitHub Actions to keep the map and stats up to date — fully automatic.
 
 1) **Pick a country on the interactive map** → click **“Say hello”**.  
-2) You’re sent to **GitHub Issues** with a prefilled title like `hello|TR` and the label `country-claim`.  
+2) You’re sent to **GitHub Issues** with a prefilled title like \`hello|TR\` and the label \`country-claim\`.  
 3) **Submit the issue.** That’s it — the workflow takes over.  
-4) The **GitHub Action** (runs on `issues: opened`) validates the issue title.
-5) It updates the data store (e.g. `data/visitors.json`), **increments counts**, and appends your GitHub handle.  
-6) It **rebuilds the SVG map** (`assets/world.svg`) and **regenerates the README sections** (stats, tables, “Who Said Hello”).  
-   - If a README template exists (e.g. `readme.tpl.md`), placeholders like `{{TOTAL_HELLOS}}`, `{{COUNTRY_TABLE}}` are replaced.  
+4) The **GitHub Action** (runs on \`issues: opened\`) validates the issue title.
+5) It updates the data store (e.g. \`data/visitors.json\`), **increments counts**, and appends your GitHub handle.  
+6) It **rebuilds the SVG map** (\`assets/world.svg\`) and **regenerates the README sections** (stats, tables, “Who Said Hello”).  
+   - If a README template exists (e.g. \`readme.tpl.md\`), placeholders like \`{{TOTAL_HELLOS}}\`, \`{{COUNTRY_TABLE}}\` are replaced.  
 7) The Action **commits & pushes** the changes, **closes your issue with a thank-you message**, and GitHub refreshes the README/Pages.
 </details>
 
