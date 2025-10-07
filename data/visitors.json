@@ -1,7 +1,23 @@
 {
   "version": 3,
-  "updatedAt": "",
+  "updatedAt": "2025-10-07T19:39:07.136Z",
   "maxChangesPerUser": 3,
-  "countries": {},
-  "users": {}
+  "countries": {
+    "CN": {
+      "users": {
+        "buralog": true
+      },
+      "firstUser": "buralog",
+      "lastAt": "2025-10-07T19:39:07.135Z"
+    }
+  },
+  "users": {
+    "buralog": {
+      "current": {
+        "iso": "CN",
+        "city": null
+      },
+      "changesUsed": 1
+    }
+  }
 }
