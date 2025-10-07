@@ -216,17 +216,20 @@
 <script>
 (function(){
   // Map init
-   // Map init
   var map = L.map('map', {
-    worldCopyJump: true, 
+    worldCopyJump: false, 
     maxBoundsViscosity: 1.0, 
     minZoom: 2, 
     maxZoom: 8,
-    maxBounds: [[-85, -180], [85, 180]]
+    maxBounds: [[-85, -180], [85, 180]],
+    maxBoundsViscosity: 1.0
   }).setView([20, 0], 2);
+  
+  // Prevent world wrapping
+  map.setMaxBounds([[-85, -180], [85, 180]]);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    noWrap: false, 
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    noWrap: true, 
     bounds: [[-85, -180], [85, 180]],
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
@@ -393,7 +396,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         var iso2 = getISO2(f.properties); var n = counts[iso2]||0;
         return {color:'#666', weight:.8, fill:true, fillColor:fillColorFor(n), fillOpacity:baseOpacityFor(n)};
       },
-      onEachFeature: bindFeature
+      onEachFeature: bindFeature,
+      worldCopyJump: false
     }).addTo(map);
   }
 
@@ -428,7 +432,18 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     fetch(url, {cache:'no-store'})
       .then(function(res){ return res.ok ? res.json() : null; })
       .then(function(json){
-        if(json && json.countries){ counts = json.countries; updatedAt = json.updatedAt || null; }
+        if(json && json.countries){
+          // Parse the new data structure: count users per country
+          counts = {};
+          for(var iso in json.countries){
+            if(!json.countries.hasOwnProperty(iso)) continue;
+            var countryData = json.countries[iso];
+            if(countryData && countryData.users){
+              counts[iso] = Object.keys(countryData.users).length;
+            }
+          }
+          updatedAt = json.updatedAt || null;
+        }
         setDemoIfEmpty();
         cb && cb();
       })
