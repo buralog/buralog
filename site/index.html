@@ -428,7 +428,7 @@
   }
 
   function loadCounts(cb){
-    var url = 'https://raw.githubusercontent.com/buralog/buralog/main/data/visitors.json?ts=' + Date.now();
+    var url = 'https://raw.githubusercontent.com/buralog/buralog/refs/heads/main/data/visitors.json?ts=' + Date.now();
     fetch(url, {cache:'no-store'})
       .then(function(res){ return res.ok ? res.json() : null; })
       .then(function(json){
