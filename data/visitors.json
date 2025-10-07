@@ -1,20 +1,7 @@
 {
-  "countries": {
-    "TR": 1,
-    "BR": 1,
-    "AU": 1
-  },
-  "firstVisitor": {
-    "TR": "buralog",
-    "BR": "buralog",
-    "AU": "buralog"
-  },
-  "byUser": {
-    "buralog": {
-      "count": 3,
-      "last": "AU",
-      "firstAt": "2025-10-04T22:09:37.446Z"
-    }
-  },
-  "updatedAt": "2025-10-06T18:29:26.494Z"
+  "version": 3,
+  "updatedAt": "",
+  "maxChangesPerUser": 3,
+  "countries": {},
+  "users": {}
 }
