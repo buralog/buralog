@@ -13,20 +13,13 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
     const visitorsPath = nodePath.resolve('data/visitors.json');
     const data = JSON.parse(fs.readFileSync(visitorsPath, 'utf8'));
 
-    let counts = {};
-    if (data && data.version === 3 && data.countries) {
-        for (const [iso, info] of Object.entries(data.countries)) {
-            counts[iso.toUpperCase()] = Object.keys((info && info.users) || {}).length;
-        }
-    } else if (data && data.countries) {
-        // legacy: countries[ISO] = number
-        for (const [iso, n] of Object.entries(data.countries)) {
-            counts[iso.toUpperCase()] = typeof n === 'number' ? n : 0;
-        }
+    const counts = {};
+    for (const [iso, info] of Object.entries(data.countries || {})) {
+        counts[iso] = Object.keys(info.users || {}).length;
     }
 
     const totalCountries = Object.values(counts).filter(c => c > 0).length;
-    const totalHellos = Object.values(counts).reduce((s, c) => s + c, 0);
+    const totalHellos = Object.values(counts).reduce((a, b) => a + b, 0);
     const updatedAt = data.updatedAt || new Date().toISOString();
 
     // ---- 2) Fetch GeoJSON (Admin-0 countries)
@@ -46,7 +39,7 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
         if (iso) isoToName[iso] = name;
     }
 
-    // ---- 3) Layout: larger map, slimmer panel, tiny margins
+    // ---- 3) Layout: larger map, slimmer panel, minimal margins
     const width = 1480;
     const height = 900;
     const margin = 6;
@@ -56,21 +49,22 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
     const panelY = margin;
     const panelH = height - 2 * margin;
 
-    // Map area with padding to reduce whitespace
+    // Map area with minimal padding to maximize map size
     const mapW = width - panelW - 3 * margin;
-    const topPad = 40;    // Reduce top whitespace
-    const botPad = 40;    // Reduce bottom whitespace
-    const mapArea = [[margin, margin + topPad], [margin + mapW, height - margin - botPad]];
+    const topPad = 10;    // Minimal top whitespace
+    const botPad = 10;    // Minimal bottom whitespace
+    const leftShift = -50; // Shift map left to use more space
+    const mapArea = [[margin + leftShift, margin + topPad], [margin + mapW + leftShift, height - margin - botPad]];
 
     // Projection fits the map area and scale it to fill better
     const projection = d3geo.geoNaturalEarth1();
     projection.fitExtent(mapArea, world);
-    // Boost scale to make map larger and fill the space better
-    projection.scale(projection.scale() * 1.);
+    // Boost scale significantly to make map larger and fill the space
+    projection.scale(projection.scale() * 1.05);
 
     // Center the map horizontally in its area
     const [cx, cy] = projection.translate();
-    projection.translate([cx, cy + 10]); // Slight vertical adjustment
+    projection.translate([cx, cy]); // Shift left for better centering
 
     const geoPath = d3geo.geoPath(projection);
 
@@ -126,10 +120,10 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
         svg.appendChild(p);
     }
 
-    // ---- 6) Legend inside the map (bottom-right, vertical)
+    // ---- 6) Legend inside the map (bottom-right, vertical) - LARGER TEXT
     const mapRight = margin + mapW;
     const mapBottom = height - margin;
-    const lgPad = 10, rowH = 26, rows = 4, lgW = 120, lgH = lgPad * 2 + rows * rowH;
+    const lgPad = 14, rowH = 32, rows = 4, lgW = 140, lgH = lgPad * 2 + rows * rowH;
 
     const legend = doc.createElement('g');
     legend.setAttribute('transform', `translate(${mapRight - lgW - 12}, ${mapBottom - lgH - 12})`);
@@ -146,12 +140,12 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
     legend.appendChild(legendBg);
 
     const legendRow = (i, label, cVal) => {
-        const y = lgPad + i * rowH + 18;
+        const y = lgPad + i * rowH + 20;
         const sw = doc.createElement('rect');
         sw.setAttribute('x', String(lgPad));
-        sw.setAttribute('y', String(y - 14));
-        sw.setAttribute('width', '14');
-        sw.setAttribute('height', '14');
+        sw.setAttribute('y', String(y - 16));
+        sw.setAttribute('width', '18');
+        sw.setAttribute('height', '18');
         sw.setAttribute('fill', fillFor(cVal));
         sw.setAttribute('fill-opacity', String(opacityFor(cVal)));
         sw.setAttribute('stroke', '#6b7280');
@@ -159,10 +153,11 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
         legend.appendChild(sw);
 
         const t = doc.createElement('text');
-        t.setAttribute('x', String(lgPad + 22));
+        t.setAttribute('x', String(lgPad + 26));
         t.setAttribute('y', String(y));
         t.setAttribute('font-family', 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif');
-        t.setAttribute('font-size', '13');
+        t.setAttribute('font-size', '16');
+        t.setAttribute('font-weight', '500');
         t.setAttribute('fill', '#111827');
         t.appendChild(doc.createTextNode(label));
         legend.appendChild(t);
@@ -202,11 +197,11 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
     };
 
     let y = 40;
-    mkText(18, y, 'Say Hello From 🌍', { bold: true, size: 22 }); y += 32;
+    mkText(18, y, 'Say Hello From 🌍', { bold: true, size: 26 }); y += 36;
 
     // STAT CHIPS ROW
     const chipRowY = y;
-    const chipH = 56, chipR = 12, gap = 12;
+    const chipH = 64, chipR = 12, gap = 12;
     const chipW = Math.floor((panelW - 18 * 2 - gap) / 2);
 
     const chip = (x, title, value, accent) => {
@@ -229,17 +224,18 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
         g.appendChild(acc);
 
         const titleText = doc.createElement('text');
-        titleText.setAttribute('x', '12'); titleText.setAttribute('y', '26');
+        titleText.setAttribute('x', '12'); titleText.setAttribute('y', '28');
         titleText.setAttribute('font-family', 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif');
-        titleText.setAttribute('font-size', '13');
+        titleText.setAttribute('font-size', '15');
+        titleText.setAttribute('font-weight', '500');
         titleText.setAttribute('fill', '#6b7280'); // slate-500
         titleText.appendChild(doc.createTextNode(title));
         g.appendChild(titleText);
 
         const valueText = doc.createElement('text');
-        valueText.setAttribute('x', '12'); valueText.setAttribute('y', '46');
+        valueText.setAttribute('x', '12'); valueText.setAttribute('y', '52');
         valueText.setAttribute('font-family', 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif');
-        valueText.setAttribute('font-size', '22');
+        valueText.setAttribute('font-size', '26');
         valueText.setAttribute('font-weight', '700');
         valueText.setAttribute('fill', '#111827');
         valueText.appendChild(doc.createTextNode(String(value)));
@@ -248,7 +244,7 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
 
     chip(18, 'Hellos', totalHellos, '#2563eb');   // blue accent
     chip(18 + chipW + gap, 'Countries', totalCountries, '#059669'); // green accent
-    y = chipRowY + chipH + 24;
+    y = chipRowY + chipH + 26;
 
     // Divider
     const hr1 = doc.createElement('line');
@@ -258,44 +254,56 @@ const { DOMImplementation, XMLSerializer } = require('xmldom');
     panel.appendChild(hr1);
     y += 26;
 
-    // Top countries list (flags + country names)
-    mkText(18, y, 'Top countries', { bold: true, size: 18 }); y += 24;
+    // Top countries list (flags + country names) - LARGER TEXT
+    mkText(18, y, 'Top countries', { bold: true, size: 20 }); y += 28;
 
     const top = Object.entries(counts)
         .filter(([_, c]) => c > 0)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 12);
 
-    const rowHeight = 24;
+    const rowHeight = 28;
     top.forEach(([iso, c], i) => {
         const rowY = y + i * rowHeight;
         const countryName = isoToName[iso] || iso;
-        mkText(18, rowY, `${flagEmoji(iso)} ${countryName}`, { size: 15, color: '#111827' });
+        mkText(18, rowY, `${flagEmoji(iso)} ${countryName}`, { size: 17, color: '#111827' });
 
         const countText = doc.createElement('text');
         countText.setAttribute('x', String(panelW - 18));
         countText.setAttribute('y', String(rowY));
         countText.setAttribute('text-anchor', 'end');
         countText.setAttribute('font-family', 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif');
-        countText.setAttribute('font-size', '15');
-        countText.setAttribute('font-weight', '600');
+        countText.setAttribute('font-size', '17');
+        countText.setAttribute('font-weight', '700');
         countText.setAttribute('fill', '#111827');
         countText.appendChild(doc.createTextNode(String(c)));
         panel.appendChild(countText);
     });
 
-    // Bottom divider and updated time at the bottom
-    const bottomY = panelH - 42;
+    // Bottom divider and updated time at the bottom - LARGER & CLEARER
+    const bottomY = panelH - 50;
     const hr2 = doc.createElement('line');
     hr2.setAttribute('x1', '14'); hr2.setAttribute('y1', String(bottomY));
     hr2.setAttribute('x2', String(panelW - 14)); hr2.setAttribute('y2', String(bottomY));
     hr2.setAttribute('stroke', '#d1d5db'); hr2.setAttribute('stroke-width', '1');
     panel.appendChild(hr2);
 
-    const updateY = bottomY + 20;
-    mkText(panelW / 2, updateY, 'Last updated', { size: 11, color: '#6b7280', anchor: 'middle' });
-    mkText(panelW / 2, updateY + 14, updatedAt.replace('T', ' ').replace(/\.\d+Z$/, '').replace(/Z$/, ' UTC'),
-        { size: 11, color: '#6b7280', anchor: 'middle' });
+    // Format timestamp to be more readable (in UTC)
+    const formatDate = (isoStr) => {
+        const d = new Date(isoStr);
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = months[d.getUTCMonth()];
+        const day = d.getUTCDate();
+        const year = d.getUTCFullYear();
+        const hours = String(d.getUTCHours()).padStart(2, '0');
+        const mins = String(d.getUTCMinutes()).padStart(2, '0');
+        return `${month} ${day}, ${year} ${hours}:${mins} UTC`;
+    };
+
+    const updateY = bottomY + 24;
+    mkText(panelW / 2, updateY, 'Last updated', { size: 13, color: '#6b7280', anchor: 'middle', bold: true });
+    mkText(panelW / 2, updateY + 18, formatDate(updatedAt),
+        { size: 14, color: '#374151', anchor: 'middle', bold: true });
 
     // ---- 8) Write
     const outPath = nodePath.resolve('assets/world.svg');

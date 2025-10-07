@@ -465,10 +465,9 @@
   sayBtn.addEventListener('click', function(){
     if(!selected) return;
     var url = new URL('https://github.com/buralog/buralog/issues/new');
-    url.searchParams.set('title', 'hi|' + selected.iso2);
+    url.searchParams.set('title', 'hello|' + selected.iso2);
     url.searchParams.set('labels','country-claim');
     var body = 'Saying hi from ' + selected.name + ' (' + selected.iso2 + ') 👋';
-    body += '\n\n_Submitted from the sidebar button_';
     url.searchParams.set('body', body);
     window.top.location.href = url.toString();
   });

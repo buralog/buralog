@@ -16,101 +16,284 @@ concurrency:
 jobs:
   handle-hi:
     runs-on: ubuntu-latest
-    # Only proceed for issues like: title starts with "hi|" + label present + not a bot
-    if: startsWith(github.event.issue.title, 'hi|') && contains(github.event.issue.labels.*.name, 'country-claim') && !endsWith(github.event.issue.user.login, '[bot]')
+    # Only proceed if title starts with "hello|" + label present + not a bot
+    if: startsWith(github.event.issue.title, 'hello|') && contains(github.event.issue.labels.*.name, 'country-claim') && !endsWith(github.event.issue.user.login, '[bot]')
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Ensure data + template exist
         run: |
-          mkdir -p data assets
-          [ -f data/visitors.json ] || echo '{"countries":{},"firstVisitor":{},"byUser":{},"updatedAt":""}' > data/visitors.json
-          [ -f README.tpl.md ] || cat > README.tpl.md <<'TPL'
-          # 🌍 Say Hi From Your Country
+          mkdir -p data assets scripts
+
+          # NEW: v3 schema bootstrap
+          if [ ! -f data/visitors.json ]; then
+            cat > data/visitors.json <<'JSON'
+          {
+            "version": 3,
+            "updatedAt": "",
+            "maxChangesPerUser": 3,
+            "countries": {},
+            "users": {}
+          }
+          JSON
+          fi
+
+          cat > README.tpl.md <<'TPL'
+          👋 Hello, I'm Burakhan
+
+          I’m a software developer, focused on the web technologies and mobile apps.
+
+          # 🌍 Say Hello From Your Country!
+
+          **Join the global hello wave!** Click your country on the interactive map and leave a hello 👋 
+          > [Open interactive map](https://buralog.github.io/buralog/)
 
           ![World map](assets/world.svg)
 
-          **Say hi → [Open the interactive map](https://buralog.github.io/buralog/)**
+          <table>
+          <tr>
+          <td width="80%" valign="top">
 
-          ## Stats
-          - **Total countries:** {{TOTAL_COUNTRIES}}
-          - **Total hellos:** {{TOTAL_HELLOS}}
+          ## 📊 Stats
 
-          ## Visitors by Country
+          👋 **{{TOTAL_HELLOS}}** hellos • 🌎 **{{TOTAL_COUNTRIES}}** countries • 🎉 Growing daily!
+
+          ### 👥 Who Said Hello?
+          {{WHO_SAID_HELLO}}
+
+          </td>
+          <td width="20%" valign="top">
+
+          ## 📋 Hellos by Country
           {{COUNTRY_TABLE}}
+          </td>
+          </tr>
+          </table>
 
+          ---
+
+          <details>
+          <summary><strong>⚙️ How It Works (GitHub Actions)</strong></summary>
+            
+          This project uses GitHub Issues + GitHub Actions to keep the map and stats up to date — fully automatic.
+
+          1) **Pick a country on the interactive map** → click **“Say hello”**.  
+          2) You’re sent to **GitHub Issues** with a prefilled title like \`hello|TR\` and the label \`country-claim\`.  
+          3) **Submit the issue.** That’s it — the workflow takes over.  
+          4) The **GitHub Action** (runs on \`issues: opened\`) validates the issue title.
+          5) It updates the data store (e.g. \`data/visitors.json\`), **increments counts**, and appends your GitHub handle.  
+          6) It **rebuilds the SVG map** (\`assets/world.svg\`) and **regenerates the README sections** (stats, tables, “Who Said Hello”).  
+             - If a README template exists (e.g. \`readme.tpl.md\`), placeholders like \`{{TOTAL_HELLOS}}\`, \`{{COUNTRY_TABLE}}\` are replaced.  
+          7) The Action **commits & pushes** the changes, **closes your issue with a thank-you message**, and GitHub refreshes the README/Pages.
+          </details>
+
+
+          --- 
           _Last updated: {{UPDATED_AT}}_
           TPL
+
+          # Minimal placeholder map template in case your builder needs it
           [ -f assets/world.template.svg ] || echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><g id="legend"></g><text x="5" y="25">World map template placeholder</text></svg>' > assets/world.template.svg
 
-      - name: Update guestbook and README
+      - name: Update visitors.json and README (v3 schema)
         env:
           ACTOR: ${{ github.event.issue.user.login }}
           TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
           node - <<'NODE'
           const fs = require('fs');
 
+          // ---------- Helpers
+          const nowISO = () => new Date().toISOString();
+          const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+          const flagEmoji = (iso2) => {
+            const A = 0x1F1E6, Z = 0x1F1FF;
+            const code = iso2.toUpperCase();
+            if (!/^[A-Z]{2}$/.test(code)) return '';
+            return String.fromCodePoint(A + (code.charCodeAt(0)-65)) + String.fromCodePoint(A + (code.charCodeAt(1)-65));
+          };
+          const countryName = (iso2) => regionNames.of(iso2.toUpperCase()) || iso2.toUpperCase();
+
+          function ensureV3(obj) {
+            if (obj && obj.version === 3) return obj;
+            
+            if (obj && obj.countries && obj.byUser) {
+              const v3 = {
+                version: 3,
+                updatedAt: obj.updatedAt || nowISO(),
+                maxChangesPerUser: 3,
+                countries: {},
+                users: {}
+              };
+
+              // Seed users.current.iso from 'last'
+              for (const [user, info] of Object.entries(obj.byUser)) {
+                v3.users[user] = {
+                  current: { iso: info.last || null, city: null },
+                  changesUsed: Math.min(info.count || 0, 3)
+                };
+              }
+
+              // Build per-country user sets from users' current.iso
+              for (const [user, uinfo] of Object.entries(v3.users)) {
+                const iso = uinfo.current?.iso;
+                if (!iso) continue;
+                if (!v3.countries[iso]) v3.countries[iso] = { users: {}, firstUser: obj.firstVisitor?.[iso] || null, lastAt: obj.updatedAt || nowISO() };
+                v3.countries[iso].users[user] = true;
+                // keep firstUser from old if exists; do not overwrite
+                if (!v3.countries[iso].firstUser) v3.countries[iso].firstUser = user;
+              }
+              return v3;
+            }
+
+            // Fresh v3 minimal
+            return {
+              version: 3,
+              updatedAt: "",
+              maxChangesPerUser: 3,
+              countries: {},
+              users: {}
+            };
+          }
+
+          // ---------- Inputs
           const ACTOR = process.env.ACTOR;
           const TITLE = process.env.TITLE || '';
-          const ISO = (TITLE.split('|')[1]||'').trim().toUpperCase();
+          const BODY = process.env.ISSUE_BODY || '';
+          const ISO = (TITLE.split('|')[1] || '').trim().toUpperCase();
 
           if (!/^[A-Z]{2}$/.test(ISO)) {
-            console.log('Invalid ISO, skipping'); process.exit(0);
+            console.log('Invalid ISO in title; expected hello|XX. No-op.');
+            // Do not fail the job; just skip.
+            process.exit(0);
           }
 
+          // ---------- Load & migrate to v3
           const path = 'data/visitors.json';
-          const raw = fs.existsSync(path) ? JSON.parse(fs.readFileSync(path,'utf8')) : {countries:{},firstVisitor:{},byUser:{},updatedAt:""};
-          raw.countries ||= {}; raw.firstVisitor ||= {}; raw.byUser ||= {};
+          const raw = fs.existsSync(path) ? JSON.parse(fs.readFileSync(path,'utf8')) : {};
+          const data = ensureV3(raw);
 
-          const user = raw.byUser[ACTOR] || {count:0,last:null,firstAt:null};
+          // ---------- Ensure containers
+          data.version = 3;
+          data.maxChangesPerUser = 3;
+          data.updatedAt ||= "";
 
-          let changed = false;
-          if (user.count >= 100) {
-            console.log('User limit reached, no-op');
-          } else if (user.last === ISO) {
-            console.log('Same country as last, no-op');
-          } else {
-            raw.countries[ISO] = (raw.countries[ISO]||0)+1;
-            if (!raw.firstVisitor[ISO]) raw.firstVisitor[ISO] = ACTOR;
-            user.count += 1; user.last = ISO; if (!user.firstAt) user.firstAt = new Date().toISOString();
-            raw.byUser[ACTOR] = user;
-            raw.updatedAt = new Date().toISOString();
-            fs.writeFileSync(path, JSON.stringify(raw,null,2));
-            changed = true;
+          data.countries ||= {};
+          data.users ||= {};
+
+          if (!data.countries[ISO]) {
+            data.countries[ISO] = { users: {}, firstUser: null, lastAt: null };
           }
 
-          // Build README from template
+          // ---------- Current user record
+          const userRec = data.users[ACTOR] || { current: { iso: null, city: null }, changesUsed: 0 };
+
+          // Optional city parse (kept null unless provided)
+          // accept "City: Istanbul" lines from issue body
+          const cityMatch = BODY.match(/^\s*City:\s*(.+)\s*$/mi);
+          const city = cityMatch ? cityMatch[1].trim() : (userRec.current?.city ?? null);
+
+          // ---------- No-op & limits
+          if (userRec.changesUsed >= data.maxChangesPerUser) {
+            console.log(`User ${ACTOR} reached max changes (${data.maxChangesPerUser}). No-op.`);
+            fs.writeFileSync('/tmp/changed.flag', '');
+            // Still rebuild README to keep timestamps if you want? We'll skip.
+            process.exit(0);
+          }
+
+          if ((userRec.current?.iso || null) === ISO) {
+            console.log(`Same country as current (${ISO}). No-op.`);
+            fs.writeFileSync('/tmp/changed.flag', '');
+          } else {
+            // Move user between countries (remove from previous)
+            const prevIso = userRec.current?.iso || null;
+            if (prevIso && data.countries[prevIso]?.users) {
+              delete data.countries[prevIso].users[ACTOR];
+              // keep firstUser untouched even if it becomes empty
+            }
+
+            // Add to new country
+            data.countries[ISO].users[ACTOR] = true;
+
+            // Set firstUser once; never overwrite
+            if (!data.countries[ISO].firstUser) {
+              data.countries[ISO].firstUser = ACTOR;
+            }
+
+            data.countries[ISO].lastAt = nowISO();
+
+            // Increment user changes & update current
+            userRec.current = { iso: ISO, city };
+            userRec.changesUsed = (userRec.changesUsed || 0) + 1;
+
+            data.users[ACTOR] = userRec;
+            data.updatedAt = nowISO();
+
+            fs.writeFileSync(path, JSON.stringify(data, null, 2));
+            fs.writeFileSync('/tmp/changed.flag', '1');
+          }
+
+          // ---------- Build README from template
           const tpl = fs.readFileSync('README.tpl.md','utf8');
-          const countries = Object.entries(raw.countries).sort((a,b)=> b[1]-a[1]);
-          const totalHellos = countries.reduce((s,[,c])=>s+c,0);
-          const totalCountries = countries.length;
-          const table = ['| Country | Hellos | First |','|---|---:|---|', ...countries.map(([iso,count])=>{
-            const first = raw.firstVisitor[iso] ? `@${raw.firstVisitor[iso]}` : '—';
-            return `| ${iso} | ${count} | ${first} |`;
-          })].join('\n');
+
+          // Counts = unique users per country
+          const countryEntries = Object.entries(data.countries)
+            .map(([iso, obj]) => [iso, Object.keys(obj.users || {}).length])
+            .filter(([, count]) => count > 0)
+            .sort((a,b) => b[1]-a[1]);
+
+          const totalHellos = countryEntries.reduce((s,[,c])=>s+c,0);
+          const totalCountries = countryEntries.length;
+
+          // Who Said Hello? → show up to 50 recent "current" users (sorted by their country's lastAt desc, then name)
+          const isoLast = {};
+          for (const [iso, cinfo] of Object.entries(data.countries)) {
+            isoLast[iso] = cinfo.lastAt || '1970-01-01T00:00:00.000Z';
+          }
+
+          const currentUsers = Object.entries(data.users)
+            .map(([u, urec]) => ({ user: u, iso: urec.current?.iso || null }))
+            .filter(x => x.iso)
+            .sort((a,b) => (isoLast[b.iso]||'').localeCompare(isoLast[a.iso]||'') || a.user.localeCompare(b.user))
+            .slice(0, 50);
+
+          const whoList = currentUsers.map(({user, iso}) => {
+            const flag = flagEmoji(iso);
+            return `${flag} [@${user}](https://github.com/${user})`;
+          }).join('|');
+
+          // Country table (right column)
+          function tableMD() {
+            const rows = ['| Country | Count |','|---------|------:|'];
+            for (const [iso, count] of countryEntries) {
+              const name = countryName(iso);
+              const flag = flagEmoji(iso);
+              rows.push(`| ${flag} ${name} | ${count} |`);
+            }
+            return rows.join('\n');
+          }
 
           const out = tpl
-            .replace('{{TOTAL_COUNTRIES}}', String(totalCountries))
             .replace('{{TOTAL_HELLOS}}', String(totalHellos))
-            .replace('{{COUNTRY_TABLE}}', table)
-            .replace('{{UPDATED_AT}}', raw.updatedAt || new Date().toISOString());
+            .replace('{{TOTAL_COUNTRIES}}', String(totalCountries))
+            .replace('{{WHO_SAID_HELLO}}', whoList || '—')
+            .replace('{{COUNTRY_TABLE}}', tableMD())
+            .replace('{{UPDATED_AT}}', data.updatedAt || nowISO());
 
           fs.writeFileSync('README.md', out);
 
-          // Write a small file to signal whether anything changed
-          fs.writeFileSync('/tmp/changed.flag', changed ? '1' : '');
           NODE
 
       - name: Build choropleth world map SVG
         run: |
-         npm i d3-geo xmldom node-fetch@2 --silent
-         node scripts/build-svg-world-map.js
+          npm i d3-geo xmldom node-fetch@2 --silent
+          node scripts/build-svg-world-map.js
 
       - name: Commit changes (if any)
         run: |
