@@ -428,7 +428,7 @@
   }
 
   function loadCounts(cb){
-    var url = 'https://raw.githubusercontent.com/buralog/buralog/main/data/visitors.json?ts=' + Date.now();
+    var url = 'https://raw.githubusercontent.com/buralog/buralog/refs/heads/main/data/visitors.json?ts=' + Date.now();
     fetch(url, {cache:'no-store'})
       .then(function(res){ return res.ok ? res.json() : null; })
       .then(function(json){
@@ -482,13 +482,25 @@
     });
   });
 
+  // Get flag emoji from country code
+  function getFlagEmoji(iso2) {
+    if (!iso2 || iso2.length !== 2) return '🌍';
+    var code = iso2.toUpperCase();
+    // Convert to regional indicator symbols (flag emojis)
+    return String.fromCodePoint(
+      ...[...code].map(c => 127397 + c.charCodeAt())
+    );
+  }
+
   // Say hello click (attached to the sidebar button)
   sayBtn.addEventListener('click', function(){
     if(!selected) return;
     var url = new URL('https://github.com/buralog/buralog/issues/new');
+    var flag = getFlagEmoji(selected.iso2);
     url.searchParams.set('title', 'hello|' + selected.iso2);
     url.searchParams.set('labels','country-claim');
-    var body = 'Saying hi from ' + selected.name + ' (' + selected.iso2 + ') 👋';
+    var body = 'Hello 👋 from ' + flag + selected.name;
+
     url.searchParams.set('body', body);
     window.top.location.href = url.toString();
   });
