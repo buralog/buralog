@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-08T04:31:33.984Z",
+  "updatedAt": "2025-10-08T07:46:09.648Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -30,6 +30,13 @@
       },
       "firstUser": "Xaxeric",
       "lastAt": "2025-10-08T04:31:33.983Z"
+    },
+    "GB": {
+      "users": {
+        "mapsmania": true
+      },
+      "firstUser": "mapsmania",
+      "lastAt": "2025-10-08T07:46:09.648Z"
     }
   },
   "users": {
@@ -57,6 +64,13 @@
     "Xaxeric": {
       "current": {
         "iso": "AU",
+        "city": null
+      },
+      "changesUsed": 1
+    },
+    "mapsmania": {
+      "current": {
+        "iso": "GB",
         "city": null
       },
       "changesUsed": 1

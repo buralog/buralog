@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **4** hellos • 🌎 **4** countries
+👋 **5** hellos • 🌎 **5** countries
 
 ### 👥 Who Said Hello?
-🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric)
+🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇬🇧 [@mapsmania](https://github.com/mapsmania)
 
 </td>
 <td width="20%" valign="top">
@@ -26,6 +26,7 @@
 | 🇯🇵 Japan | 1 |
 | 🇳🇬 Nigeria | 1 |
 | 🇦🇺 Australia | 1 |
+| 🇬🇧 United Kingdom | 1 |
 </td>
 </tr>
 </table>
@@ -49,4 +50,4 @@ This project uses GitHub Issues + GitHub Actions to keep the map and stats up to
 
 
 --- 
-_Last updated: 2025-10-08T04:31:33.984Z_
+_Last updated: 2025-10-08T07:46:09.648Z_
