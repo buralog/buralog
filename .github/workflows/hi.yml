@@ -15,7 +15,6 @@ jobs:
       ) &&
       !endsWith(github.event.issue.user.login, '[bot]')
     steps:
-    steps:
       - uses: actions/checkout@v4
 
       - name: Setup Node
