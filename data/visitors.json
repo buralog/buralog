@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-08T00:17:30.412Z",
+  "updatedAt": "2025-10-08T00:18:40.782Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -16,6 +16,13 @@
       },
       "firstUser": "dai",
       "lastAt": "2025-10-08T00:17:30.412Z"
+    },
+    "NG": {
+      "users": {
+        "sdotdev": true
+      },
+      "firstUser": "sdotdev",
+      "lastAt": "2025-10-08T00:18:40.782Z"
     }
   },
   "users": {
@@ -29,6 +36,13 @@
     "dai": {
       "current": {
         "iso": "JP",
+        "city": null
+      },
+      "changesUsed": 1
+    },
+    "sdotdev": {
+      "current": {
+        "iso": "NG",
         "city": null
       },
       "changesUsed": 1
