@@ -5,44 +5,44 @@
   "countries": {
     "TR": {
       "users": {
-        "buralog": true,
-        "tarikhasimoglu": true
+        "buralog": "2025-10-07T23:11:13.000Z",
+        "tarikhasimoglu": "2025-10-08T11:12:21.000Z"
       },
       "firstUser": "buralog",
       "lastAt": "2025-10-08T11:12:42.769Z"
     },
     "JP": {
       "users": {
-        "dai": true
+        "dai": "2025-10-07T23:30:52.000Z"
       },
       "firstUser": "dai",
       "lastAt": "2025-10-08T00:17:30.412Z"
     },
     "NG": {
       "users": {
-        "sdotdev": true
+        "sdotdev": "2025-10-07T23:30:57.000Z"
       },
       "firstUser": "sdotdev",
       "lastAt": "2025-10-08T00:18:40.782Z"
     },
     "AU": {
       "users": {
-        "Xaxeric": true
+        "Xaxeric": "2025-10-08T04:31:15.000Z"
       },
       "firstUser": "Xaxeric",
       "lastAt": "2025-10-08T04:31:33.983Z"
     },
     "GB": {
       "users": {
-        "mapsmania": true,
-        "omgmog": true
+        "mapsmania": "2025-10-08T07:45:51.000Z",
+        "omgmog": "2025-10-08T09:23:49.000Z"
       },
       "firstUser": "mapsmania",
       "lastAt": "2025-10-08T09:24:02.760Z"
     },
     "IN": {
       "users": {
-        "arjunshajitech": true
+        "arjunshajitech": "2025-10-08T07:57:13.000Z"
       },
       "firstUser": "arjunshajitech",
       "lastAt": "2025-10-08T07:57:23.634Z"
@@ -52,56 +52,64 @@
     "buralog": {
       "current": {
         "iso": "TR",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-07T23:11:13.000Z"
       },
       "changesUsed": 1
     },
     "dai": {
       "current": {
         "iso": "JP",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-07T23:30:52.000Z"
       },
       "changesUsed": 1
     },
     "sdotdev": {
       "current": {
         "iso": "NG",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-07T23:30:57.000Z"
       },
       "changesUsed": 1
     },
     "Xaxeric": {
       "current": {
         "iso": "AU",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-08T04:31:15.000Z"
       },
       "changesUsed": 1
     },
     "mapsmania": {
       "current": {
         "iso": "GB",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-08T07:45:51.000Z"
       },
       "changesUsed": 1
     },
     "arjunshajitech": {
       "current": {
         "iso": "IN",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-08T07:57:13.000Z"
       },
       "changesUsed": 1
     },
     "omgmog": {
       "current": {
         "iso": "GB",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-08T09:23:49.000Z"
       },
       "changesUsed": 1
     },
     "tarikhasimoglu": {
       "current": {
         "iso": "TR",
-        "city": null
+        "city": null,
+        "helloAt": "2025-10-08T11:12:21.000Z"
       },
       "changesUsed": 1
     }

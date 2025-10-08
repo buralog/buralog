@@ -39,6 +39,7 @@ jobs:
           ACTOR: ${{ github.event.issue.user.login }}
           TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TIME:  ${{ github.event.issue.created_at }}
         run: |
           node scripts/update-visitors-and-readme.js
 

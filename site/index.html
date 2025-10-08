@@ -727,39 +727,50 @@
         .catch(function () { readmeOrder = []; cb && cb(); });
     }
 
+    function toMillis(v) {
+      if (!v) return 0;
+      if (typeof v === 'number') return v < 1e12 ? v * 1000 : v; // sec→ms
+      var ms = Date.parse(v);
+      return isNaN(ms) ? 0 : ms;
+    }
+
     function renderPeopleList() {
       if (!usersData || Object.keys(usersData).length === 0) {
         peopleList.innerHTML = '<li><span class="small">No hellos yet — be the first!</span></li>';
         return;
       }
+
       var users = [];
       for (var username in usersData) {
         if (!usersData.hasOwnProperty(username)) continue;
-        var userData = usersData[username];
-        if (userData && userData.current && userData.current.iso) {
-          users.push({ username: username, iso: userData.current.iso });
+        var u = usersData[username];
+        var iso = u && u.current && u.current.iso;
+        if (!iso) continue;
+
+        // Prefer per-user timestamp; fallback to per-country map if needed
+        var helloAt = u && u.current && u.current.helloAt;
+        if (!helloAt) {
+          var c = (counts && iso) ? iso : null; 
         }
+
+        users.push({ username, iso, t: toMillis(helloAt) });
       }
+
+      // Oldest → newest (first submitter stays top)
       users.sort(function (a, b) {
-        var ia = readmeOrder.indexOf(a.username);
-        var ib = readmeOrder.indexOf(b.username);
-        if (ia !== -1 || ib !== -1) {
-          if (ia === -1) return 1;
-          if (ib === -1) return -1;
-          if (ia !== ib) return ia - ib; // oldest → newest
-        }
+        if (a.t !== b.t) return a.t - b.t;
         return a.username.toLowerCase().localeCompare(b.username.toLowerCase());
       });
+
       peopleList.innerHTML = '';
-      for (var i = 0; i < users.length; i++) {
-        var user = users[i];
+      users.forEach(function (user) {
         var name = isoToName[user.iso] || user.iso;
         var li = document.createElement('li');
         li.innerHTML =
           '<span class="flagchip">' + flagImgHTML(user.iso, name, 'flagchip-img') + '</span>' +
           '<a class="username" href="https://github.com/' + user.username + '" target="_blank" rel="noopener">' + user.username + '</a>';
         peopleList.appendChild(li);
-      }
+      });
     }
 
     function updateHelloPanel() {
