@@ -164,18 +164,25 @@ function main() {
     const totalHellos = countryEntries.reduce((s, [, c]) => s + c, 0);
     const totalCountries = countryEntries.length;
 
-    // Who Said Hello? → show up to 50 recent "current" users
+    // Who Said Hello? → show ALL users, oldest → newest
     const isoLast = {};
     for (const [iso, cinfo] of Object.entries(data.countries)) {
         isoLast[iso] = cinfo.lastAt || '1970-01-01T00:00:00.000Z';
     }
 
     const currentUsers = Object.entries(data.users)
-        .map(([u, urec]) => ({ user: u, iso: urec.current?.iso || null }))
-        .filter(x => x.iso)
-        .sort((a, b) => (isoLast[b.iso] || '').localeCompare(isoLast[a.iso] || '') || a.user.localeCompare(b.user))
-        .slice(0, 50);
+        .map(([user, urec]) => ({ user, iso: urec.current?.iso || null }))
+        .filter(x => x.iso);
 
+    // Sort oldest → newest; tie-break by username
+    currentUsers.sort((a, b) => {
+        const ta = new Date(isoLast[a.iso] ?? '1970-01-01T00:00:00.000Z').getTime();
+        const tb = new Date(isoLast[b.iso] ?? '1970-01-01T00:00:00.000Z').getTime();
+        if (ta !== tb) return ta - tb;            // ascending (oldest first)
+        return a.user.localeCompare(b.user);      // stable tie-break
+    });
+
+    // No slice → show everyone
     const whoList = currentUsers.map(({ user, iso }) => {
         const flag = flagEmoji(iso);
         return `${flag} [@${user}](https://github.com/${user})`;

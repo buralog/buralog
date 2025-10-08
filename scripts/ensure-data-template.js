@@ -69,7 +69,7 @@ function ensureDataAndTemplate() {
 This project uses GitHub Issues + GitHub Actions to keep the map and stats up to date — fully automatic.
 
 1) **Pick a country on the interactive map** → click **"Say hello"**.  
-2) You're sent to **GitHub Issues** with a prefilled title like \`hello|TR\` and the label \`country-claim\`.  
+2) You're sent to **GitHub Issues** with a prefilled title like \`hello|TR\`.  
 3) **Submit the issue.** That's it — the workflow takes over.  
 4) The **GitHub Action** (runs on \`issues: opened\`) validates the issue title.
 5) It updates the data store (e.g. \`data/visitors.json\`), **increments counts**, and appends your GitHub handle.  

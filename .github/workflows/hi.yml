@@ -9,10 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       (startsWith(github.event.issue.title, 'hello|') || startsWith(github.event.issue.title, 'hi|')) &&
-      (
-        contains(github.event.issue.labels.*.name, 'country-claim') ||
-        (github.event.action == 'labeled' && github.event.label.name == 'country-claim')
-      ) &&
       !endsWith(github.event.issue.user.login, '[bot]')
     steps:
       - uses: actions/checkout@v4
@@ -90,5 +86,4 @@ jobs:
             gh issue comment ${{ github.event.issue.number }} \
               --body "Hey @${{ github.event.issue.user.login }} — your selection didn't change anything (same country as before or limit reached)."
           fi
-          gh issue edit ${{ github.event.issue.number }} --add-label "hello-world"
           gh issue close ${{ github.event.issue.number }} --comment "Closed automatically ✅"
