@@ -1,14 +1,15 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-08T09:24:02.760Z",
+  "updatedAt": "2025-10-08T11:12:42.769Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
       "users": {
-        "buralog": true
+        "buralog": true,
+        "tarikhasimoglu": true
       },
       "firstUser": "buralog",
-      "lastAt": "2025-10-07T23:11:47.827Z"
+      "lastAt": "2025-10-08T11:12:42.769Z"
     },
     "JP": {
       "users": {
@@ -93,6 +94,13 @@
     "omgmog": {
       "current": {
         "iso": "GB",
+        "city": null
+      },
+      "changesUsed": 1
+    },
+    "tarikhasimoglu": {
+      "current": {
+        "iso": "TR",
         "city": null
       },
       "changesUsed": 1

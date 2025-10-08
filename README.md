@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **7** hellos • 🌎 **6** countries
+👋 **8** hellos • 🌎 **6** countries
 
 ### 👥 Who Said Hello?
-🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇬🇧 [@omgmog](https://github.com/omgmog)
+🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇬🇧 [@omgmog](https://github.com/omgmog) | 🇹🇷 [@buralog](https://github.com/buralog) | 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu)
 
 </td>
 <td width="20%" valign="top">
@@ -22,8 +22,8 @@
 ## 📋 Hellos by Country
 | Country | Count |
 |---------|------:|
+| 🇹🇷 Türkiye | 2 |
 | 🇬🇧 United Kingdom | 2 |
-| 🇹🇷 Türkiye | 1 |
 | 🇯🇵 Japan | 1 |
 | 🇳🇬 Nigeria | 1 |
 | 🇦🇺 Australia | 1 |
@@ -51,4 +51,4 @@ This project uses GitHub Issues + GitHub Actions to keep the map and stats up to
 
 
 --- 
-_Last updated: 2025-10-08T09:24:02.760Z_
+_Last updated: 2025-10-08T11:12:42.769Z_
