@@ -50,7 +50,7 @@
     background: #eaf4f6
   }
 
-  /* Right panel as a column; footer sticks to bottom via spacer */
+  /* Right panel column */
   aside {
     display: flex;
     flex-direction: column;
@@ -84,7 +84,7 @@
     flex: 0 0 auto;
   }
 
-  /* Make the tabs panel grow to fill remaining height */
+  /* Tabs panel grows to fill remaining height */
   .panel.panel-grow {
     flex: 1 1 auto;
     min-height: 0;
@@ -92,10 +92,22 @@
     flex-direction: column;
   }
 
+  .panel.panel-grow .tabs {
+    flex: 0 0 auto;
+  }
+
   .panel.panel-grow .tab-content {
+    /* Do NOT force display here; tabs control visibility */
     flex: 1 1 auto;
     min-height: 0;
-    display: block;
+  }
+
+  .tab-content {
+    display: none
+  }
+
+  .tab-content.active {
+    display: block
   }
 
   /* KPIs + refresh */
@@ -165,7 +177,7 @@
     cursor: not-allowed
   }
 
-  /* Tabs */
+  /* Tabs header */
   .tabs {
     display: flex;
     gap: 4px;
@@ -194,15 +206,7 @@
     border-bottom-color: var(--link)
   }
 
-  .tab-content {
-    display: none
-  }
-
-  .tab-content.active {
-    display: block
-  }
-
-  /* Lists: let panel control height; avoid count/scrollbar overlap */
+  /* Lists fill available height; avoid count/scrollbar overlap */
   .toplist,
   .peoplelist {
     margin: 0;
@@ -212,7 +216,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-gutter: stable;
-    /* avoid layout shift/overlap */
+    /* prevent number/gutter collision */
   }
 
   .toplist li,
@@ -464,22 +468,6 @@
     text-decoration: underline
   }
 
-  /* Footer */
-  .footer {
-    text-align: center;
-    font-size: 14px;
-    color: var(--muted);
-    padding: 10px 0;
-    margin-top: 12px;
-    opacity: 0.7;
-    font-weight: 500;
-  }
-
-  .footer:hover {
-    opacity: 1;
-    transition: opacity .2s ease;
-  }
-
   @media (max-width:900px) {
     .app {
       grid-template-columns: 1fr;
@@ -498,15 +486,16 @@
 
   <aside aria-label="Right panel">
 
-    <!-- About (brief, moved to top) -->
+    <!-- About (brief, top) -->
     <div class="panel">
       <h2>Say Hello from 🌍</h2>
       <div class="project-text">
-        Click a country on the map and hit <b>“Say hello”</b> — a GitHub Action updates the map & stats.
-        Details and source are at <a href="https://github.com/buralog/buralog" target="_blank"
-          rel="noopener">@buralog</a>.
+        Join a global wave of hellos 👋 — every submission updates this interactive map in real time via GitHub Actions.
+        <br><br>
+        Learn more at <a href="https://github.com/buralog" target="_blank" rel="noopener">github.com/buralog</a>.
       </div>
     </div>
+
 
     <div class="panel">
       <div class="stats-header">
@@ -551,8 +540,6 @@
 
     <div class="spacer"></div>
 
-    <div class="footer">Made by buralog</div>
-
   </aside>
 </div>
 
@@ -585,7 +572,7 @@
     var isoToName = {};
     var selected = null;
     var usersData = {};
-    var readmeOrder = [];
+    var readmeOrder = []; // order of usernames from README "Who Said Hello?"
 
     // DOM
     var kpiTotal = document.getElementById('kpi-total');
@@ -612,11 +599,7 @@
       return (iso2 && iso2.toUpperCase() === 'XC') || /Northern Cyprus/i.test(name || '');
     }
 
-    /**
-     * Returns an <img> HTML string that:
-     * - displays at 20x15
-     * - loads higher DPR from FlagCDN via srcset (40x30, 80x60)
-     */
+    /** Returns an <img> HTML string at 20x15 with HiDPI srcset. */
     function flagImgHTML(iso2, name, cls) {
       if (isNorthernCyprus(iso2, name)) {
         return '<img class="' + (cls || 'flagchip-img') + '" alt="' + (name || iso2) + ' flag" src="data:image/svg+xml;utf8,' +
@@ -696,12 +679,38 @@
       }
     }
 
+    // README order parsing (oldest → newest)
+    function parseReadmeUserOrder(md) {
+      var start = md.indexOf('### 👥 Who Said Hello?');
+      if (start === -1) return [];
+      var sub = md.slice(start);
+      var cutPoints = [];
+      var h2 = sub.indexOf('\n## '); if (h2 !== -1) cutPoints.push(h2);
+      var td = sub.indexOf('</td>'); if (td !== -1) cutPoints.push(td);
+      var hr = sub.indexOf('\n---'); if (hr !== -1) cutPoints.push(hr);
+      var end = cutPoints.length ? Math.min.apply(null, cutPoints) : sub.length;
+      var body = sub.slice(0, end);
+      var re = /\[@([A-Za-z0-9-]+)\]\(https:\/\/github\.com\/[^\)]+\)/g;
+      var m, out = [];
+      while ((m = re.exec(body)) !== null) { out.push(m[1]); }
+      return out;
+    }
+    function loadReadmeOrder(cb) {
+      var url = 'https://raw.githubusercontent.com/buralog/buralog/refs/heads/main/README.md?ts=' + Date.now();
+      fetch(url, { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.text() : ''; })
+        .then(function (text) {
+          readmeOrder = parseReadmeUserOrder(text) || [];
+          cb && cb();
+        })
+        .catch(function () { readmeOrder = []; cb && cb(); });
+    }
+
     function renderPeopleList() {
       if (!usersData || Object.keys(usersData).length === 0) {
         peopleList.innerHTML = '<li><span class="small">No hellos yet — be the first!</span></li>';
         return;
       }
-
       var users = [];
       for (var username in usersData) {
         if (!usersData.hasOwnProperty(username)) continue;
@@ -710,21 +719,16 @@
           users.push({ username: username, iso: userData.current.iso });
         }
       }
-
-      // Sort by README order: oldest (first in README) → newest (last in README)
       users.sort(function (a, b) {
         var ia = readmeOrder.indexOf(a.username);
         var ib = readmeOrder.indexOf(b.username);
-        // If either is known, prioritize known ordering
         if (ia !== -1 || ib !== -1) {
-          if (ia === -1) return 1;   // unknown → after known
+          if (ia === -1) return 1;
           if (ib === -1) return -1;
-          if (ia !== ib) return ia - ib;
+          if (ia !== ib) return ia - ib; // oldest → newest
         }
-        // Fallback: stable alphabetical
         return a.username.toLowerCase().localeCompare(b.username.toLowerCase());
       });
-
       peopleList.innerHTML = '';
       for (var i = 0; i < users.length; i++) {
         var user = users[i];
@@ -736,7 +740,6 @@
         peopleList.appendChild(li);
       }
     }
-
 
     function updateHelloPanel() {
       if (!selected) {
@@ -763,7 +766,7 @@
       });
       l.on('mouseout', function () { layer.resetStyle(l); });
 
-      l.on('click', function (e) {
+      l.on('click', function () {
         selected = { iso2: iso2, name: name, count: n };
         updateHelloPanel();
         map.fitBounds(l.getBounds(), { padding: [20, 20] });
@@ -855,29 +858,6 @@
         .then(function (json) { world = json; cb && cb(); });
     }
 
-    function parseReadmeUserOrder(md) {
-      // Narrow to the "Who Said Hello?" section
-      var start = md.indexOf('### 👥 Who Said Hello?');
-      if (start === -1) return [];
-      var sub = md.slice(start);
-
-      // Cut at the next major boundary
-      var cutPoints = [];
-      var h2 = sub.indexOf('\n## '); if (h2 !== -1) cutPoints.push(h2);
-      var td = sub.indexOf('</td>'); if (td !== -1) cutPoints.push(td);
-      var hr = sub.indexOf('\n---'); if (hr !== -1) cutPoints.push(hr);
-      var end = cutPoints.length ? Math.min.apply(null, cutPoints) : sub.length;
-      var body = sub.slice(0, end);
-
-      // Extract markdown GitHub handles like [@username](https://github.com/username)
-      var re = /\[@([A-Za-z0-9-]+)\]\(https:\/\/github\.com\/[^\)]+\)/g;
-      var m, out = [];
-      while ((m = re.exec(body)) !== null) {
-        out.push(m[1]);
-      }
-      return out;
-    }
-
     function loadReadmeOrder(cb) {
       var url = 'https://raw.githubusercontent.com/buralog/buralog/refs/heads/main/README.md?ts=' + Date.now();
       fetch(url, { cache: 'no-store' })
@@ -919,12 +899,10 @@
     for (var i = 0; i < tabBtns.length; i++) {
       tabBtns[i].addEventListener('click', function (e) {
         var target = e.currentTarget.getAttribute('data-tab');
-
-        for (var j = 0; j < tabBtns.length; j++) {
-          tabBtns[j].classList.remove('active');
-        }
+        // header state
+        for (var j = 0; j < tabBtns.length; j++) { tabBtns[j].classList.remove('active'); }
         e.currentTarget.classList.add('active');
-
+        // pane state
         document.getElementById('tab-countries').classList.remove('active');
         document.getElementById('tab-people').classList.remove('active');
         document.getElementById('tab-' + target).classList.add('active');
@@ -934,7 +912,6 @@
     // "Say hello" button → open issue
     sayBtn.addEventListener('click', function () {
       if (!selected) return;
-
       function getFlagEmoji(iso2) {
         if (!iso2 || iso2.length !== 2) return '🌍';
         var code = iso2.toUpperCase();
@@ -942,7 +919,6 @@
           ...[...code].map(function (c) { return 127397 + c.charCodeAt(); })
         );
       }
-
       var flag = getFlagEmoji(selected.iso2);
       var url = new URL('https://github.com/buralog/buralog/issues/new');
       url.searchParams.set('title', 'hello|' + selected.iso2);
@@ -951,6 +927,7 @@
       window.top.location.href = url.toString();
     });
 
+    // Init sequence
     loadCounts(function () {
       loadWorld(function () {
         loadReadmeOrder(function () {
@@ -958,7 +935,6 @@
         });
       });
     });
-
   })();
 </script>
 
