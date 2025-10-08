@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-08T00:18:40.782Z",
+  "updatedAt": "2025-10-08T04:31:33.984Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -23,6 +23,13 @@
       },
       "firstUser": "sdotdev",
       "lastAt": "2025-10-08T00:18:40.782Z"
+    },
+    "AU": {
+      "users": {
+        "Xaxeric": true
+      },
+      "firstUser": "Xaxeric",
+      "lastAt": "2025-10-08T04:31:33.983Z"
     }
   },
   "users": {
@@ -43,6 +50,13 @@
     "sdotdev": {
       "current": {
         "iso": "NG",
+        "city": null
+      },
+      "changesUsed": 1
+    },
+    "Xaxeric": {
+      "current": {
+        "iso": "AU",
         "city": null
       },
       "changesUsed": 1
