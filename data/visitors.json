@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-08T07:46:09.648Z",
+  "updatedAt": "2025-10-08T07:57:23.634Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -37,6 +37,13 @@
       },
       "firstUser": "mapsmania",
       "lastAt": "2025-10-08T07:46:09.648Z"
+    },
+    "IN": {
+      "users": {
+        "arjunshajitech": true
+      },
+      "firstUser": "arjunshajitech",
+      "lastAt": "2025-10-08T07:57:23.634Z"
     }
   },
   "users": {
@@ -71,6 +78,13 @@
     "mapsmania": {
       "current": {
         "iso": "GB",
+        "city": null
+      },
+      "changesUsed": 1
+    },
+    "arjunshajitech": {
+      "current": {
+        "iso": "IN",
         "city": null
       },
       "changesUsed": 1
