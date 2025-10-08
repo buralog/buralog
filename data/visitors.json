@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-07T23:11:47.827Z",
+  "updatedAt": "2025-10-08T00:17:30.412Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -9,12 +9,26 @@
       },
       "firstUser": "buralog",
       "lastAt": "2025-10-07T23:11:47.827Z"
+    },
+    "JP": {
+      "users": {
+        "dai": true
+      },
+      "firstUser": "dai",
+      "lastAt": "2025-10-08T00:17:30.412Z"
     }
   },
   "users": {
     "buralog": {
       "current": {
         "iso": "TR",
+        "city": null
+      },
+      "changesUsed": 1
+    },
+    "dai": {
+      "current": {
+        "iso": "JP",
         "city": null
       },
       "changesUsed": 1
