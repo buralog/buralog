@@ -15,6 +15,7 @@
     --link: #0366d6;
     --success-a: #22c55e;
     --success-b: #16a34a;
+    --list-row: 32px;
   }
 
   html,
@@ -86,7 +87,7 @@
 
   /* Tabs panel grows to fill remaining height */
   .panel.panel-grow {
-    overflow: hidden;
+    overflow: visible;
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
@@ -105,12 +106,6 @@
 
   .tab-content {
     display: none;
-    height: 100%;
-    min-height: 0;
-    /* allow flex child to shrink */
-    overflow: auto;
-    /* <-- scroll lives here */
-    scrollbar-gutter: stable both-edges;
   }
 
   .tab-content.active {
@@ -219,10 +214,11 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    max-height: none;
-    /* remove old cap */
-    overflow: visible;
-    /* let the pane handle scrolling */
+    overflow: auto;
+    /* scroll only when exceeding max rows */
+    max-height: calc(10 * var(--list-row));
+    /* ~10 rows for laptop-ish heights */
+    scrollbar-gutter: stable;
   }
 
   .toplist li,
@@ -232,6 +228,7 @@
     gap: 8px;
     padding: 8px 6px;
     border-bottom: 1px dashed var(--border);
+    /* keep row height around --list-row (8+16+8 = 32px) */
   }
 
   .toplist li:hover,
@@ -241,7 +238,7 @@
 
   .toplist li:last-child,
   .peoplelist li:last-child {
-    border-bottom: 0;
+    border-bottom: 0
   }
 
   /* Flag chips (crisp, retina-ready) */
@@ -480,9 +477,27 @@
       height: auto
     }
 
+
     #map {
       height: 64vh;
       min-height: 420px
+    }
+  }
+
+  /* More rows for taller screens */
+  @media (min-height: 900px) {
+
+    .toplist,
+    .peoplelist {
+      max-height: calc(16 * var(--list-row));
+    }
+  }
+
+  @media (min-height: 1100px) {
+
+    .toplist,
+    .peoplelist {
+      max-height: calc(25 * var(--list-row));
     }
   }
 </style>
@@ -539,7 +554,7 @@
       <div id="tab-countries" class="tab-content active">
         <ul class="toplist" id="top-list"></ul>
       </div>
-      <div id="tab-people" class="tab-content" style="scrollbar-gutter: stable;">
+      <div id="tab-people" class="tab-content">
         <ul class="peoplelist" id="people-list"></ul>
       </div>
     </div>
