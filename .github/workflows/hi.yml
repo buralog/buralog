@@ -73,7 +73,7 @@ jobs:
             echo "No changes to commit"
           fi
 
-      - name: Thank, label, and close
+      - name: Thank and close
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -81,7 +81,7 @@ jobs:
           CHANGED=$(test -s /tmp/changed.flag && echo "yes" || echo "no")
           if [ "$CHANGED" = "yes" ]; then
             gh issue comment ${{ github.event.issue.number }} \
-              --body "Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title }}**. The map & stats are updated. ✨"
+              --body $'Thanks @${{ github.event.issue.user.login }}! Added your hello from **${{ github.event.issue.title }}**. The map & stats are updated. ✨\n\n_Heads-up:_ the README may take up to ~30s to refresh, and the GitHub Pages site up to ~1min due to caching.'
           else
             gh issue comment ${{ github.event.issue.number }} \
               --body "Hey @${{ github.event.issue.user.login }} — your selection didn't change anything (same country as before or limit reached)."
