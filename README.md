@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **11** hellos • 🌎 **7** countries
+👋 **12** hellos • 🌎 **7** countries
 
 ### 👥 Who Said Hello?
-🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@omgmog](https://github.com/omgmog) | 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) | 🇪🇬 [@meladhani01](https://github.com/meladhani01) | 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) | 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison)
+🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@omgmog](https://github.com/omgmog) | 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) | 🇪🇬 [@meladhani01](https://github.com/meladhani01) | 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) | 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) | 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison)
 
 </td>
 <td width="20%" valign="top">
@@ -22,7 +22,7 @@
 ## 📋 Hellos by Country
 | Country | Count |
 |---------|------:|
-| 🇮🇳 India | 3 |
+| 🇮🇳 India | 4 |
 | 🇹🇷 Türkiye | 2 |
 | 🇬🇧 United Kingdom | 2 |
 | 🇯🇵 Japan | 1 |
@@ -52,4 +52,4 @@ This project uses GitHub Issues + GitHub Actions to keep the map and stats up to
 
 
 --- 
-_Last updated: 2025-10-09T07:02:14.745Z_
+_Last updated: 2025-10-09T07:15:20.591Z_
