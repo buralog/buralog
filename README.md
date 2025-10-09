@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **8** hellos • 🌎 **6** countries
+👋 **9** hellos • 🌎 **7** countries
 
 ### 👥 Who Said Hello?
-🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇬🇧 [@omgmog](https://github.com/omgmog) | 🇹🇷 [@buralog](https://github.com/buralog) | 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu)
+🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@omgmog](https://github.com/omgmog) | 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) | 🇪🇬 [@meladhani01](https://github.com/meladhani01)
 
 </td>
 <td width="20%" valign="top">
@@ -28,6 +28,7 @@
 | 🇳🇬 Nigeria | 1 |
 | 🇦🇺 Australia | 1 |
 | 🇮🇳 India | 1 |
+| 🇪🇬 Egypt | 1 |
 </td>
 </tr>
 </table>
@@ -51,4 +52,4 @@ This project uses GitHub Issues + GitHub Actions to keep the map and stats up to
 
 
 --- 
-_Last updated: 2025-10-08T11:12:42.769Z_
+_Last updated: 2025-10-09T00:30:34.682Z_

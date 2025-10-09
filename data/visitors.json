@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-08T11:12:42.769Z",
+  "updatedAt": "2025-10-09T00:30:34.682Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -46,6 +46,13 @@
       },
       "firstUser": "arjunshajitech",
       "lastAt": "2025-10-08T07:57:23.634Z"
+    },
+    "EG": {
+      "users": {
+        "meladhani01": "2025-10-09T00:30:20Z"
+      },
+      "firstUser": "meladhani01",
+      "lastAt": "2025-10-09T00:30:20Z"
     }
   },
   "users": {
@@ -110,6 +117,14 @@
         "iso": "TR",
         "city": null,
         "helloAt": "2025-10-08T11:12:21.000Z"
+      },
+      "changesUsed": 1
+    },
+    "meladhani01": {
+      "current": {
+        "iso": "EG",
+        "city": null,
+        "helloAt": "2025-10-09T00:30:20Z"
       },
       "changesUsed": 1
     }
