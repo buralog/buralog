@@ -7,6 +7,10 @@ on:
 jobs:
   handle-hi:
     runs-on: ubuntu-latest
+    # Add concurrency control to queue jobs instead of running simultaneously
+    concurrency:
+      group: hello-world-map-updates
+      cancel-in-progress: false
     if: >
       (startsWith(github.event.issue.title, 'hello|') || startsWith(github.event.issue.title, 'hi|')) &&
       !endsWith(github.event.issue.user.login, '[bot]')
@@ -39,7 +43,7 @@ jobs:
           ACTOR: ${{ github.event.issue.user.login }}
           TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_TIME:  ${{ github.event.issue.created_at }}
+          ISSUE_TIME: ${{ github.event.issue.created_at }}
         run: |
           node scripts/update-visitors-and-readme.js
 
@@ -52,6 +56,7 @@ jobs:
         env:
           ACTOR: ${{ github.event.issue.user.login }}
           TITLE: ${{ github.event.issue.title }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -s /tmp/changed.flag ]; then
             # Parse ISO from title like: "🇹🇷 hello|TR - @user says hi"
@@ -69,7 +74,39 @@ jobs:
 
             MSG="👋 from ${FLAG:-$ISO} by @${ACTOR}"
             git commit -m "$MSG"
-            git push
+            
+            # Retry logic for concurrent pushes
+            MAX_RETRIES=5
+            RETRY_COUNT=0
+            PUSH_SUCCESS=0
+            
+            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+              echo "Attempting push (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)..."
+              
+              if git push; then
+                echo "Push successful!"
+                PUSH_SUCCESS=1
+                break
+              else
+                echo "Push failed, pulling and rebasing..."
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                
+                if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                  # Pull with rebase to integrate remote changes
+                  git pull --rebase origin main
+                  
+                  # Wait a bit before retrying (exponential backoff)
+                  WAIT_TIME=$((2 ** RETRY_COUNT))
+                  echo "Waiting ${WAIT_TIME}s before retry..."
+                  sleep $WAIT_TIME
+                fi
+              fi
+            done
+            
+            if [ $PUSH_SUCCESS -eq 0 ]; then
+              echo "Failed to push after $MAX_RETRIES attempts"
+              exit 1
+            fi
           else
             echo "No changes to commit"
           fi
