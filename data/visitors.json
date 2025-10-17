@@ -1,15 +1,16 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-09T07:15:20.591Z",
+  "updatedAt": "2025-10-17T05:19:58.374Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
       "users": {
         "buralog": "2025-10-07T23:11:13.000Z",
-        "tarikhasimoglu": "2025-10-08T11:12:21.000Z"
+        "tarikhasimoglu": "2025-10-08T11:12:21.000Z",
+        "Ncp-Zg": "2025-10-17T05:19:43Z"
       },
       "firstUser": "buralog",
-      "lastAt": "2025-10-08T11:12:42.769Z"
+      "lastAt": "2025-10-17T05:19:43Z"
     },
     "JP": {
       "users": {
@@ -152,6 +153,14 @@
         "iso": "IN",
         "city": null,
         "helloAt": "2025-10-09T01:24:51Z"
+      },
+      "changesUsed": 1
+    },
+    "Ncp-Zg": {
+      "current": {
+        "iso": "TR",
+        "city": null,
+        "helloAt": "2025-10-17T05:19:43Z"
       },
       "changesUsed": 1
     }

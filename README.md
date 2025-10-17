@@ -3,7 +3,7 @@
 **Join the global hello wave!** Click your country on the interactive map and leave a hello 👋 
 > [Open interactive map](https://buralog.github.io/buralog/)
 
-[![World map](assets/world.svg "Open the interactive map")](https://buralog.github.io/buralog/)
+![World map](assets/world.svg)
 
 <table>
 <tr>
@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **12** hellos • 🌎 **7** countries
+👋 **13** hellos • 🌎 **7** countries
 
 ### 👥 Who Said Hello?
-🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@omgmog](https://github.com/omgmog) | 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) | 🇪🇬 [@meladhani01](https://github.com/meladhani01) | 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) | 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) | 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison)
+🇹🇷 [@buralog](https://github.com/buralog) | 🇯🇵 [@dai](https://github.com/dai) | 🇳🇬 [@sdotdev](https://github.com/sdotdev) | 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) | 🇬🇧 [@mapsmania](https://github.com/mapsmania) | 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) | 🇬🇧 [@omgmog](https://github.com/omgmog) | 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) | 🇪🇬 [@meladhani01](https://github.com/meladhani01) | 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) | 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) | 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison) | 🇹🇷 [@Ncp-Zg](https://github.com/Ncp-Zg)
 
 </td>
 <td width="20%" valign="top">
@@ -23,7 +23,7 @@
 | Country | Count |
 |---------|------:|
 | 🇮🇳 India | 4 |
-| 🇹🇷 Türkiye | 2 |
+| 🇹🇷 Türkiye | 3 |
 | 🇬🇧 United Kingdom | 2 |
 | 🇯🇵 Japan | 1 |
 | 🇳🇬 Nigeria | 1 |
@@ -52,4 +52,4 @@ This project uses GitHub Issues + GitHub Actions to keep the map and stats up to
 
 
 --- 
-_Last updated: 2025-10-09T07:15:20.591Z_
+_Last updated: 2025-10-17T05:19:58.374Z_
