@@ -593,7 +593,6 @@
     var isoToName = {};
     var selected = null;
     var usersData = {};
-    var readmeOrder = []; // order of usernames from README "Who Said Hello?"
 
     // DOM
     var kpiTotal = document.getElementById('kpi-total');
@@ -716,17 +715,6 @@
       while ((m = re.exec(body)) !== null) { out.push(m[1]); }
       return out;
     }
-    function loadReadmeOrder(cb) {
-      var url = 'https://raw.githubusercontent.com/buralog/buralog/refs/heads/main/README.md?ts=' + Date.now();
-      fetch(url, { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.text() : ''; })
-        .then(function (text) {
-          readmeOrder = parseReadmeUserOrder(text) || [];
-          cb && cb();
-        })
-        .catch(function () { readmeOrder = []; cb && cb(); });
-    }
-
     function toMillis(v) {
       if (!v) return 0;
       if (typeof v === 'number') return v < 1e12 ? v * 1000 : v; // sec→ms
@@ -890,17 +878,6 @@
         .then(function (json) { world = json; cb && cb(); });
     }
 
-    function loadReadmeOrder(cb) {
-      var url = 'https://raw.githubusercontent.com/buralog/buralog/refs/heads/main/README.md?ts=' + Date.now();
-      fetch(url, { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.text() : ''; })
-        .then(function (text) {
-          readmeOrder = parseReadmeUserOrder(text) || [];
-          cb && cb();
-        })
-        .catch(function () { readmeOrder = []; cb && cb(); });
-    }
-
     function refreshAll() {
       computeKPIs();
       buildLayer();
@@ -962,9 +939,7 @@
     // Init sequence
     loadCounts(function () {
       loadWorld(function () {
-        loadReadmeOrder(function () {
-          refreshAll();
-        });
+        refreshAll();
       });
     });
   })();

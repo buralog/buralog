@@ -202,10 +202,11 @@ function buildReadme(data) {
         return a.user.localeCompare(b.user);         // stable tie-break
     });
 
+    // Generate vertical list with <br> tags for GitHub README
     const whoList = currentUsers.map(({ user, iso }) => {
         const flag = flagEmoji(iso);
         return `${flag} [@${user}](https://github.com/${user})`;
-    }).join(' | ');
+    }).join(' <br> ');
 
     function tableMD() {
         const rows = ['| Country | Count |', '|---------|------:|'];
