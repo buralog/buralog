@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-17T05:19:58.374Z",
+  "updatedAt": "2025-10-19T19:13:03.553Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -57,6 +57,13 @@
       },
       "firstUser": "meladhani01",
       "lastAt": "2025-10-09T00:30:20Z"
+    },
+    "ES": {
+      "users": {
+        "solendogan": "2025-10-19T19:12:46Z"
+      },
+      "firstUser": "solendogan",
+      "lastAt": "2025-10-19T19:12:46Z"
     }
   },
   "users": {
@@ -161,6 +168,14 @@
         "iso": "TR",
         "city": null,
         "helloAt": "2025-10-17T05:19:43Z"
+      },
+      "changesUsed": 1
+    },
+    "solendogan": {
+      "current": {
+        "iso": "ES",
+        "city": null,
+        "helloAt": "2025-10-19T19:12:46Z"
       },
       "changesUsed": 1
     }
