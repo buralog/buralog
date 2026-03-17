@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **14** hellos • 🌎 **8** countries
+👋 **15** hellos • 🌎 **8** countries
 
 ### 👥 Who Said Hello?
-🇹🇷 [@buralog](https://github.com/buralog) <br> 🇯🇵 [@dai](https://github.com/dai) <br> 🇳🇬 [@sdotdev](https://github.com/sdotdev) <br> 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) <br> 🇬🇧 [@mapsmania](https://github.com/mapsmania) <br> 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) <br> 🇬🇧 [@omgmog](https://github.com/omgmog) <br> 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) <br> 🇪🇬 [@meladhani01](https://github.com/meladhani01) <br> 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) <br> 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) <br> 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison) <br> 🇹🇷 [@Ncp-Zg](https://github.com/Ncp-Zg) <br> 🇪🇸 [@solendogan](https://github.com/solendogan)
+🇹🇷 [@buralog](https://github.com/buralog) <br> 🇯🇵 [@dai](https://github.com/dai) <br> 🇳🇬 [@sdotdev](https://github.com/sdotdev) <br> 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) <br> 🇬🇧 [@mapsmania](https://github.com/mapsmania) <br> 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) <br> 🇬🇧 [@omgmog](https://github.com/omgmog) <br> 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) <br> 🇪🇬 [@meladhani01](https://github.com/meladhani01) <br> 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) <br> 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) <br> 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison) <br> 🇹🇷 [@Ncp-Zg](https://github.com/Ncp-Zg) <br> 🇪🇸 [@solendogan](https://github.com/solendogan) <br> 🇯🇵 [@tadanobutubutu](https://github.com/tadanobutubutu)
 
 </td>
 <td width="20%" valign="top">
@@ -24,8 +24,8 @@
 |---------|------:|
 | 🇮🇳 India | 4 |
 | 🇹🇷 Türkiye | 3 |
+| 🇯🇵 Japan | 2 |
 | 🇬🇧 United Kingdom | 2 |
-| 🇯🇵 Japan | 1 |
 | 🇳🇬 Nigeria | 1 |
 | 🇦🇺 Australia | 1 |
 | 🇪🇬 Egypt | 1 |
@@ -44,4 +44,4 @@ This project uses **GitHub Issues + GitHub Actions** to keep the map and stats u
 4. The **GitHub Action** validates the issue, updates the data store, rebuilds the SVG map, regenerates the README, commits & pushes changes, and closes your issue with a thank-you message.
 
 --- 
-_Last updated: 2025-10-19T19:13:03.553Z_
+_Last updated: 2026-03-17T18:52:33.478Z_

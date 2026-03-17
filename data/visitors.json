@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2025-10-19T19:13:03.553Z",
+  "updatedAt": "2026-03-17T18:52:33.478Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -14,10 +14,11 @@
     },
     "JP": {
       "users": {
-        "dai": "2025-10-07T23:30:52.000Z"
+        "dai": "2025-10-07T23:30:52.000Z",
+        "tadanobutubutu": "2026-03-17T18:52:21Z"
       },
       "firstUser": "dai",
-      "lastAt": "2025-10-08T00:17:30.412Z"
+      "lastAt": "2026-03-17T18:52:21Z"
     },
     "NG": {
       "users": {
@@ -176,6 +177,14 @@
         "iso": "ES",
         "city": null,
         "helloAt": "2025-10-19T19:12:46Z"
+      },
+      "changesUsed": 1
+    },
+    "tadanobutubutu": {
+      "current": {
+        "iso": "JP",
+        "city": null,
+        "helloAt": "2026-03-17T18:52:21Z"
       },
       "changesUsed": 1
     }
