@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2026-04-01T09:48:35.087Z",
+  "updatedAt": "2026-07-24T13:09:29.966Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -77,6 +77,13 @@
       },
       "firstUser": "Huilin-Li",
       "lastAt": "2026-04-01T09:48:22Z"
+    },
+    "UA": {
+      "users": {
+        "wizmarin": "2026-07-24T13:09:13Z"
+      },
+      "firstUser": "wizmarin",
+      "lastAt": "2026-07-24T13:09:13Z"
     }
   },
   "users": {
@@ -207,6 +214,14 @@
         "helloAt": "2026-04-01T09:48:22Z"
       },
       "changesUsed": 2
+    },
+    "wizmarin": {
+      "current": {
+        "iso": "UA",
+        "city": null,
+        "helloAt": "2026-07-24T13:09:13Z"
+      },
+      "changesUsed": 1
     }
   }
 }

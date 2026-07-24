@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **16** hellos • 🌎 **9** countries
+👋 **17** hellos • 🌎 **10** countries
 
 ### 👥 Who Said Hello?
-🇹🇷 [@buralog](https://github.com/buralog) <br> 🇯🇵 [@dai](https://github.com/dai) <br> 🇳🇬 [@sdotdev](https://github.com/sdotdev) <br> 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) <br> 🇬🇧 [@mapsmania](https://github.com/mapsmania) <br> 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) <br> 🇬🇧 [@omgmog](https://github.com/omgmog) <br> 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) <br> 🇪🇬 [@meladhani01](https://github.com/meladhani01) <br> 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) <br> 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) <br> 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison) <br> 🇹🇷 [@Ncp-Zg](https://github.com/Ncp-Zg) <br> 🇪🇸 [@solendogan](https://github.com/solendogan) <br> 🇯🇵 [@tadanobutubutu](https://github.com/tadanobutubutu) <br> 🇩🇰 [@Huilin-Li](https://github.com/Huilin-Li)
+🇹🇷 [@buralog](https://github.com/buralog) <br> 🇯🇵 [@dai](https://github.com/dai) <br> 🇳🇬 [@sdotdev](https://github.com/sdotdev) <br> 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) <br> 🇬🇧 [@mapsmania](https://github.com/mapsmania) <br> 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) <br> 🇬🇧 [@omgmog](https://github.com/omgmog) <br> 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) <br> 🇪🇬 [@meladhani01](https://github.com/meladhani01) <br> 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) <br> 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) <br> 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison) <br> 🇹🇷 [@Ncp-Zg](https://github.com/Ncp-Zg) <br> 🇪🇸 [@solendogan](https://github.com/solendogan) <br> 🇯🇵 [@tadanobutubutu](https://github.com/tadanobutubutu) <br> 🇩🇰 [@Huilin-Li](https://github.com/Huilin-Li) <br> 🇺🇦 [@wizmarin](https://github.com/wizmarin)
 
 </td>
 <td width="20%" valign="top">
@@ -31,6 +31,7 @@
 | 🇪🇬 Egypt | 1 |
 | 🇪🇸 Spain | 1 |
 | 🇩🇰 Denmark | 1 |
+| 🇺🇦 Ukraine | 1 |
 </td>
 </tr>
 </table>
@@ -45,4 +46,4 @@ This project uses **GitHub Issues + GitHub Actions** to keep the map and stats u
 4. The **GitHub Action** validates the issue, updates the data store, rebuilds the SVG map, regenerates the README, commits & pushes changes, and closes your issue with a thank-you message.
 
 --- 
-_Last updated: 2026-04-01T09:48:35.087Z_
+_Last updated: 2026-07-24T13:09:29.966Z_
