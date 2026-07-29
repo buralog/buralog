@@ -11,10 +11,10 @@
 
 ## 📊 Stats
 
-👋 **17** hellos • 🌎 **10** countries
+👋 **18** hellos • 🌎 **10** countries
 
 ### 👥 Who Said Hello?
-🇹🇷 [@buralog](https://github.com/buralog) <br> 🇯🇵 [@dai](https://github.com/dai) <br> 🇳🇬 [@sdotdev](https://github.com/sdotdev) <br> 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) <br> 🇬🇧 [@mapsmania](https://github.com/mapsmania) <br> 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) <br> 🇬🇧 [@omgmog](https://github.com/omgmog) <br> 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) <br> 🇪🇬 [@meladhani01](https://github.com/meladhani01) <br> 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) <br> 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) <br> 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison) <br> 🇹🇷 [@Ncp-Zg](https://github.com/Ncp-Zg) <br> 🇪🇸 [@solendogan](https://github.com/solendogan) <br> 🇯🇵 [@tadanobutubutu](https://github.com/tadanobutubutu) <br> 🇩🇰 [@Huilin-Li](https://github.com/Huilin-Li) <br> 🇺🇦 [@wizmarin](https://github.com/wizmarin)
+🇹🇷 [@buralog](https://github.com/buralog) <br> 🇯🇵 [@dai](https://github.com/dai) <br> 🇳🇬 [@sdotdev](https://github.com/sdotdev) <br> 🇦🇺 [@Xaxeric](https://github.com/Xaxeric) <br> 🇬🇧 [@mapsmania](https://github.com/mapsmania) <br> 🇮🇳 [@arjunshajitech](https://github.com/arjunshajitech) <br> 🇬🇧 [@omgmog](https://github.com/omgmog) <br> 🇹🇷 [@tarikhasimoglu](https://github.com/tarikhasimoglu) <br> 🇪🇬 [@meladhani01](https://github.com/meladhani01) <br> 🇮🇳 [@nealcafferyyy](https://github.com/nealcafferyyy) <br> 🇮🇳 [@ramramjairam](https://github.com/ramramjairam) <br> 🇮🇳 [@JoshuaRaison](https://github.com/JoshuaRaison) <br> 🇹🇷 [@Ncp-Zg](https://github.com/Ncp-Zg) <br> 🇪🇸 [@solendogan](https://github.com/solendogan) <br> 🇯🇵 [@tadanobutubutu](https://github.com/tadanobutubutu) <br> 🇩🇰 [@Huilin-Li](https://github.com/Huilin-Li) <br> 🇺🇦 [@wizmarin](https://github.com/wizmarin) <br> 🇮🇳 [@shayanazmi](https://github.com/shayanazmi)
 
 </td>
 <td width="20%" valign="top">
@@ -22,7 +22,7 @@
 ## 📋 Hellos by Country
 | Country | Count |
 |---------|------:|
-| 🇮🇳 India | 4 |
+| 🇮🇳 India | 5 |
 | 🇹🇷 Türkiye | 3 |
 | 🇯🇵 Japan | 2 |
 | 🇬🇧 United Kingdom | 2 |
@@ -46,4 +46,4 @@ This project uses **GitHub Issues + GitHub Actions** to keep the map and stats u
 4. The **GitHub Action** validates the issue, updates the data store, rebuilds the SVG map, regenerates the README, commits & pushes changes, and closes your issue with a thank-you message.
 
 --- 
-_Last updated: 2026-07-24T13:09:29.966Z_
+_Last updated: 2026-07-29T17:55:13.018Z_
