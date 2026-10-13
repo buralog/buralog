@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updatedAt": "2026-07-29T17:55:13.018Z",
+  "updatedAt": "2026-10-13T14:20:59.494Z",
   "maxChangesPerUser": 3,
   "countries": {
     "TR": {
@@ -85,6 +85,13 @@
       },
       "firstUser": "wizmarin",
       "lastAt": "2026-07-24T13:09:13Z"
+    },
+    "KR": {
+      "users": {
+        "Sungho-pk42ac": "2026-10-13T14:20:35Z"
+      },
+      "firstUser": "Sungho-pk42ac",
+      "lastAt": "2026-10-13T14:20:35Z"
     }
   },
   "users": {
@@ -229,6 +236,14 @@
         "iso": "IN",
         "city": null,
         "helloAt": "2026-07-29T17:54:57Z"
+      },
+      "changesUsed": 1
+    },
+    "Sungho-pk42ac": {
+      "current": {
+        "iso": "KR",
+        "city": null,
+        "helloAt": "2026-10-13T14:20:35Z"
       },
       "changesUsed": 1
     }
